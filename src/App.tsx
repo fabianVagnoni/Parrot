@@ -1,6 +1,6 @@
 import './App.css'
 import OpenAI from "openai";
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 
 console.log('API Key exists:', !!import.meta.env.VITE_OPEN_AI_API_KEY)
 const openai = new OpenAI({
@@ -14,8 +14,50 @@ const MAX_TOKENS = 500;
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
-
+  const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
+  const [lastPageUrl, setLastPageUrl] = useState('');
+  
+  const AUTO_LAUNCH_DELAY = 30000; // 30 seconds - adjust as needed
   const languages = ['English', 'Spanish', 'French', 'German', 'Italian', 'Latvian'];
+
+  // Effect to handle auto-launch timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    const checkAndSetTimer = async () => {
+      // Get current tab URL
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const currentUrl = tab.url || '';
+
+      // Only start timer if auto-launch is enabled and we're on a new page
+      if (autoLaunchEnabled && currentUrl !== lastPageUrl) {
+        setLastPageUrl(currentUrl);
+        timer = setTimeout(() => {
+          summarizeAPI();
+        }, AUTO_LAUNCH_DELAY);
+      }
+    };
+
+    // Set up tab change listener
+    const tabChangeListener = () => {
+      checkAndSetTimer();
+    };
+
+    if (autoLaunchEnabled) {
+      chrome.tabs.onActivated.addListener(tabChangeListener);
+      chrome.tabs.onUpdated.addListener(tabChangeListener);
+      checkAndSetTimer(); // Initial check
+    }
+
+    // Cleanup
+    return () => {
+      if (timer) clearTimeout(timer);
+      if (autoLaunchEnabled) {
+        chrome.tabs.onActivated.removeListener(tabChangeListener);
+        chrome.tabs.onUpdated.removeListener(tabChangeListener);
+      }
+    };
+  }, [autoLaunchEnabled, lastPageUrl]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -238,6 +280,55 @@ function App() {
       <h1>Parrot</h1>
       <div className="card">
         <h2>Launch Task</h2>
+          {/* Auto-launch toggle switch */}
+          <div className="auto-launch-toggle" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '1rem 0'
+                  }}>
+            <label className="switch" style={{
+              position: 'relative',
+              display: 'inline-block',
+              width: '60px',
+              height: '34px'
+            }}>
+              <input
+                type="checkbox"
+                checked={autoLaunchEnabled}
+                onChange={(e) => setAutoLaunchEnabled(e.target.checked)}
+                style={{ opacity: 0, width: 0, height: 0 }}
+              />
+              <span className="slider" style={{
+                position: 'absolute',
+                cursor: 'pointer',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: autoLaunchEnabled ? '#2196F3' : '#ccc',
+                transition: '.4s',
+                borderRadius: '34px'
+              }}>
+                <span style={{
+                  position: 'absolute',
+                  content: '""',
+                  height: '26px',
+                  width: '26px',
+                  left: '4px',
+                  bottom: '4px',
+                  backgroundColor: 'white',
+                  transition: '.4s',
+                  borderRadius: '50%',
+                  transform: autoLaunchEnabled ? 'translateX(26px)' : 'translateX(0)'
+                }}></span>
+              </span>
+            </label>
+            <span style={{ marginLeft: '1rem' }}>
+              Auto-launch after {AUTO_LAUNCH_DELAY/1000} seconds
+            </span>
+          </div>
+
         <div>
           <div className="dropdown" style={{ 
             marginTop: "2rem",
