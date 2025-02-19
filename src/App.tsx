@@ -8,15 +8,12 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 
-const TEMPERATURE = 0.69;
+const TEMPERATURE = 0.1;
 const MAX_TOKENS = 500;
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
-  const [summaryLength, setSummaryLength] = useState('');
-
-  const DEFAULT_SUMMARY_LENGTH = 150;
 
   const languages = ['English', 'Spanish', 'French', 'German', 'Italian', 'Latvian'];
 
@@ -29,29 +26,41 @@ function App() {
     setIsOpen(false);
   };
 
-  const handleSummaryLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '' || /^\d+$/.test(value)) {
-      setSummaryLength(value);
-    }
-  };
+  const formatText = (text: string): string => {
+    // First, create a temporary div to handle HTML entities
+    const temp = document.createElement('div');
+    temp.innerHTML = text;
+    let decodedText = temp.textContent || temp.innerText;
 
-  const getValidSummaryLength = () => {
-    const length = parseInt(summaryLength);
-    if (!summaryLength || isNaN(length) || length <= 0) {
-      return DEFAULT_SUMMARY_LENGTH;
-    }
-    return length;
+    // Convert markdown to HTML
+    decodedText = decodedText
+      // Handle bold text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Handle headers
+      .replace(/###(.*)/g, '<h3>$1</h3>')
+      .replace(/##(.*)/g, '<h2>$1</h2>')
+      .replace(/#(.*)/g, '<h1>$1</h1>')
+      // Handle italic text
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Handle horizontal rules
+      .replace(/---/g, '<hr>')
+      // Convert newlines to <br> tags
+      .replace(/\n/g, '<br>');
+
+    return decodedText;
   };
 
   const createPopupWindow = async (summary: string) => {
     try {
-      // Create HTML content for the popup
+      // Format the summary text
+      const formattedSummary = formatText(summary);
+
       const htmlContent = `
         <!DOCTYPE html>
         <html>
           <head>
-            <title>Page Summary</title>
+            <title>Parrot</title>
+            <meta charset="UTF-8">
             <style>
               body {
                 font-family: Arial, sans-serif;
@@ -71,11 +80,22 @@ function App() {
                 margin: 0 0 16px 0;
                 font-size: 18px;
               }
+              h3 {
+                color: #444;
+                margin: 16px 0 8px 0;
+                font-size: 16px;
+              }
               .summary-text {
                 color: #444;
                 font-size: 14px;
                 line-height: 1.5;
                 text-align: justify;
+              }
+              .summary-text strong {
+                color: #000;
+              }
+              .summary-text em {
+                color: #666;
               }
               .drag-handle {
                 -webkit-app-region: drag;
@@ -87,27 +107,32 @@ function App() {
                 background: #f5f5f5;
                 border-bottom: 1px solid #ddd;
               }
+              hr {
+                border: none;
+                border-top: 1px solid #ddd;
+                margin: 16px 0;
+              }
             </style>
           </head>
           <body>
             <div class="drag-handle"></div>
             <div class="summary-container">
-              <h1>Page Summary</h1>
-              <div class="summary-text">${summary}</div>
+              <h1>Parrot Task</h1>
+              <div class="summary-text">${formattedSummary}</div>
             </div>
           </body>
         </html>
       `;
 
       // Create a Blob with the HTML content
-      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       const url = URL.createObjectURL(blob);
 
       // Get the current window position to place the popup relative to it
       const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
       const currentWindow = await chrome.windows.get(currentTab.windowId);
 
-      // Calculate position for the popup (offset from the current window)
+      // Calculate position for the popup
       const left = (currentWindow.left || 0) + 50;
       const top = (currentWindow.top || 0) + 50;
 
@@ -162,11 +187,40 @@ function App() {
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: `Please write an effective and informative
-            summary of the content of this webpage in ${selectedLanguage} that is 
-            NO more than ${summaryLength} words, but feel free to use LESS if 
-            APPROPIATE:\n${context}` }
+          { role: 'system', content: 'You are a helpful language professor.' },
+          { role: 'user', content: `Your student is reading this web page ${context} and finds it
+            very interesting. He is studying ${selectedLanguage} and wants to learn 
+            essential vocabulary and phrases taylored to the content he is reading now.
+            Please, select in the text the most important concept, translate it to 
+            ${selectedLanguage} and provide a definition both in the original
+            text's language and in ${selectedLanguage}. Also, please format everything
+            such that it is very easy to read and understand. Additionally, please write the
+            text as if the student was reading a text book: everything should be in third
+            person and other relevant formats for a text book. Return the following content
+            (That that is between brakents is what you need to replace with the actual content.
+            When you read ORIGINAL LANGUAGE, this refers to the language in which the web page
+            is written. For example, if the page is written in English, you would replace ORINGAL
+            LANGUAGE by 'English' and everything written as [X in ORIGINAL LANGUAGE] would be something
+            written in English):
+
+            [MAIN CONCEPT IN ORIGINAL LANGUAGE]: [TRANSLATION TO ${selectedLanguage}]
+            Definition in [ORIGINAL LANGUAGE]: [DEFINITION IN ORIGINAL LANGUAGE]
+            Definition in ${selectedLanguage}: [DEFINITION IN ${selectedLanguage}]
+            
+            
+            Key Vocabulary:
+            - [VOCABULARY 1]: [TRANSLATION 1]
+                Definition in [ORIGINAL LANGUAGE]: [DEFINITION IN ORIGINAL LANGUAGE]
+                Definition in ${selectedLanguage}: [DEFINITION IN ${selectedLanguage}]
+
+            - [VOCABULARY 2]: [TRANSLATION 2]
+                Definition in [ORIGINAL LANGUAGE]: [DEFINITION IN ORIGINAL LANGUAGE]
+                Definition in ${selectedLanguage}: [DEFINITION IN ${selectedLanguage}]
+
+            - [VOCABULARY 3]: [TRANSLATION 3]
+                Definition in [ORIGINAL LANGUAGE]: [DEFINITION IN ORIGINAL LANGUAGE]
+                Definition in ${selectedLanguage}: [DEFINITION IN ${selectedLanguage}]`
+          }
         ],
         temperature: TEMPERATURE,
         max_tokens: MAX_TOKENS,
@@ -181,31 +235,10 @@ function App() {
   // Rest of your component's JSX remains the same
   return (
     <div className="container">
-      <h1>API Summarizer</h1>
+      <h1>Parrot</h1>
       <div className="card">
-        <h2>Page Summarizer</h2>
+        <h2>Launch Task</h2>
         <div>
-          <div className="input-container" style={{ position: 'relative' }}>
-            <input 
-              type="text" 
-              placeholder={`Enter Summary Length`}
-              value={summaryLength}
-              onChange={handleSummaryLengthChange}
-              style={{ width: '100%' }}
-            />
-            {summaryLength && (
-              <span style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: '0.8em',
-                color: getValidSummaryLength() === DEFAULT_SUMMARY_LENGTH ? '#666' : '#008000'
-              }}>
-                {getValidSummaryLength()} words
-              </span>
-            )}
-          </div>
           <div className="dropdown" style={{ 
             marginTop: "2rem",
             marginBottom: "2rem",
@@ -278,9 +311,9 @@ function App() {
             )}
           </div>
         </div>
-        <p>Click below to generate a summary of the current page</p>
+        <p>Click below to launch task</p>
         <button onClick={summarizeAPI} className="button">
-          Summarize Page
+          Launch Task
         </button>
       </div>
     </div>
