@@ -13,7 +13,26 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
     the quiz question will be 'How do you say this <x> word in " + selectedLanguage +  "?'\
     Generate the 4 options based on this concept:" + selectedWord + ". Only output the 4 options in " + selectedLanguage +  " please and a 5th json element with the correcrt answer. no additional text. \
     Display in json format and let the first letter always be capitalized. Let the keys be\
-    option1, option2, option3, option4, coreect. Be sure that the correct answer is always one of the 4 options (chosen word translated in Spanish). No answers text should have accent/special characters.\n"
+    option1, option2, option3, option4, correct. Be sure that the correct answer is always one of the 4 options (chosen word translated in Spanish). No answers text should have accent/special characters.\n\
+    You must return the following JSON object and NOTHING ELSE:\n\{\
+        'option1': 'yourSelectedOption1',\
+        'option2': 'yourSelectedOption2',\
+        'option3': 'yourSelectedOption3',\
+        'option4': 'yourSelectedOption4',\
+        'correct': 'correctOptionAmongThePreviousOptions'\
+      }\
+    Please, ensure that your output CAN BE PARSED by the following TypeScript interface:\n\
+    interface QuizOptions {\
+      option1: string;\
+      option2: string;\
+      option3: string;\
+      option4: string;\
+      correct: string;\
+    }\
+    quizOptions = JSON.parse(quizJson);\
+    That is, be careful that your output DOES NOT CAUSE THE FOLLOWING ERROR:\
+    Unexpected token '`', ```json\
+    ";
 }
 
 export const generateSummary = async (context: string, selectedLanguage: string): Promise<string> => {

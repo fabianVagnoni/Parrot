@@ -16,7 +16,7 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
   const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
 
-  console.log('App loaded');
+  //console.log('App loaded');
 
   const highlightWord = (text: string, word: string): string => {
     return text.replace(
@@ -25,9 +25,9 @@ function App() {
     );
   };
 
-  console.log('Text Highlighted');
+  //console.log('Text Highlighted');
 
-  console.log('Text Retrieved');
+  //console.log('Text Retrieved');
 
   const generateTaskQuiz = async () => {
     if (selectedLanguage === 'Select Language') {
@@ -36,25 +36,20 @@ function App() {
     }
   
     try {
-      console.log('Starting task quiz generation...');
+      //console.log('Starting task quiz generation...');
       const visibleText = await getText();
-      console.log('Retrieved text:', visibleText);
+      //console.log('Retrieved text:', visibleText);
   
       const selectedWord = await selectWord(visibleText);
-      console.log('Selected word:', selectedWord);
+      //console.log('Selected word:', selectedWord);
   
       const highlighted = highlightWord(visibleText, selectedWord);
-      console.log('Text highlighted');
+      //console.log('Text highlighted');
       
       const quiz = await generateSummary(selectedWord, selectedLanguage);
       console.log('Quiz generated:', quiz);
   
-      await createPopupWindow(`
-        <div>
-          <div style="margin-bottom: 20px;">${highlighted}</div>
-          <div>${quiz}</div>
-        </div>
-      `);
+      await createPopupWindow(highlighted, quiz);
     } catch (error) {
       console.error("Error in generateTaskQuiz:", error);
       alert(error instanceof Error ? error.message : 'An unknown error occurred');
