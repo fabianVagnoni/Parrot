@@ -8,8 +8,8 @@ import { generateSummary } from './services/getQuiz';
 import { selectWord } from './services/getWord';
 import { createPopupWindow } from './components/createPopUp';
 import { getText } from './utils/getText';
-//import { formatText } from './utils/textProcessing';
-//import { CONFIG } from './config/constants';
+import { saveQuizResult } from './services/saveQuizResults';
+import { QuizStats } from './services/showQuizStats';
 import './App.css';
 
 function App() {
@@ -47,9 +47,14 @@ function App() {
       //console.log('Text highlighted');
       
       const quiz = await generateSummary(selectedWord, selectedLanguage);
-      console.log('Quiz generated:', quiz);
+      // console.log('Quiz generated:', quiz);
   
-      await createPopupWindow(selectedWord, quiz);
+      const result = await createPopupWindow(selectedWord, quiz);
+      saveQuizResult(
+        selectedWord,
+        selectedLanguage,
+        result === 1
+      );
     } catch (error) {
       console.error("Error in generateTaskQuiz:", error);
       alert(error instanceof Error ? error.message : 'An unknown error occurred');
@@ -66,6 +71,8 @@ function App() {
     <div className="container">
       <h1>Parrot</h1>
       <div className="card">
+        <h2>Quiz Stats</h2>
+        <QuizStats />
         <h2>Launch Task</h2>
         <AutoLaunchToggle 
           enabled={autoLaunchEnabled}
