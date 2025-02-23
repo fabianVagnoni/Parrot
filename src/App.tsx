@@ -18,12 +18,12 @@ function App() {
 
   //console.log('App loaded');
 
-  const highlightWord = (text: string, word: string): string => {
-    return text.replace(
-      new RegExp(`(${word})`, 'gi'),
-      '<span style="background-color: yellow;">$1</span>'
-    );
-  };
+  // const highlightWord = (text: string, word: string): string => {
+  //   return text.replace(
+  //     new RegExp(`(${word})`, 'gi'),
+  //     '<span style="background-color: yellow;">$1</span>'
+  //   );
+  // };
 
   //console.log('Text Highlighted');
 
@@ -43,13 +43,13 @@ function App() {
       const selectedWord = await selectWord(visibleText);
       //console.log('Selected word:', selectedWord);
   
-      const highlighted = highlightWord(visibleText, selectedWord);
+      //const highlighted = highlightWord(visibleText, selectedWord);
       //console.log('Text highlighted');
       
       const quiz = await generateSummary(selectedWord, selectedLanguage);
       console.log('Quiz generated:', quiz);
   
-      await createPopupWindow(highlighted, quiz);
+      await createPopupWindow(selectedWord, quiz);
     } catch (error) {
       console.error("Error in generateTaskQuiz:", error);
       alert(error instanceof Error ? error.message : 'An unknown error occurred');
