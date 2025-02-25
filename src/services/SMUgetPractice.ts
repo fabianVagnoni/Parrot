@@ -12,7 +12,7 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
     return "You will make a translation of the following concept.\
     Generate these 4 things based on this concept:" + selectedWord + ". Only output the following 4 things, please. NO additional text. \
     Display in json format and let the first letter always be capitalized.\
-    You must return the following JSON object and NOTHING ELSE:\n\{\
+    You must return the following JSON object and ¡¡¡NOTHING ELSE!!!:\n\{\
         'originalWord': '"+selectedWord +"' UNCHANGED ,\
         'translatedWord': '"+selectedWord+" in "+selectedLanguage+"',\
         'originalWordDef': '"+selectedWord +" definition in the ORIGINAL LANGUAGE THAT WAS PASSED',\
@@ -28,8 +28,10 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
       exampleTraslated: string;\
     }\
     quizOptions = JSON.parse(quizJson);\
-    That is, be careful that your output DOES NOT CAUSE THE FOLLOWING ERROR:\
+    That is, be careful that your output ¡¡¡DOES NOT CAUSE THE FOLLOWING ERROR!!!:\
     Unexpected token '`', ```json\
+    That is: do NOT return ANYTHING ELSE than the JSON OBJECT, NO INTRODUCTION, NO TEXT, NOTHING.\
+    If you do not follow these instructions, you will be penalized.\
     ";
 }
 

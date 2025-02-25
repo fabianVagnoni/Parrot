@@ -179,10 +179,68 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
         .hidden {
           display: none;
         }
+        .welcome-message {
+          text-align: center;
+          margin-bottom: 24px;
+          font-size: 1.4em;
+          color: #2c3e50;
+          font-weight: 500;
+          animation: fadeIn 0.8s ease-in;
+        }
+
+        .word-section {
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          padding: 20px;
+          margin-bottom: 20px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+                      0 1px 3px rgba(0, 0, 0, 0.08);
+          transition: transform 0.2s ease;
+        }
+
+        .definition-section {
+          background-color: #fff;
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          padding: 20px;
+          margin-bottom: 20px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+                      0 1px 3px rgba(0, 0, 0, 0.08);
+          transition: transform 0.2s ease;
+        }
+
+        .example-section {
+          background-color: #f1f8ff;
+          border-radius: 8px;
+          padding: 20px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
+                      0 1px 3px rgba(0, 0, 0, 0.08);
+          transition: transform 0.2s ease;
+        }
+
+        .word-section:hover,
+        .definition-section:hover,
+        .example-section:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 8px rgba(0, 0, 0, 0.12), 
+                      0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
       </style>
     </head>
     <body>
       <div class="practice-container">
+        <h1 class="welcome-message">🦜 You have a new Parrot Practice!</h1>
         <button id="revealBtn" class="reveal-button">Reveal Word Study</button>
         
         <div id="content" class="hidden">
@@ -246,6 +304,6 @@ const setupPracticeMode = (popup: Window, resolve: (value: number) => void) => {
   revealBtn?.addEventListener('click', () => {
     content?.classList.remove('hidden');
     revealBtn.style.display = 'none';
-    resolve(0);
+    resolve(1);
   });
 };
