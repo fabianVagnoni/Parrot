@@ -1,7 +1,7 @@
-import { QuizResult, QuizStats } from '../utils/interfaces';
+import { SMUQuizResult, SMUQuizStats } from '../utils/interfaces';
 
 export const saveQuizResult = (word: string, language: string, isCorrect: boolean): void => {
-  const result: QuizResult = {
+  const result: SMUQuizResult = {
     word,
     language,
     correct: isCorrect,
@@ -10,7 +10,7 @@ export const saveQuizResult = (word: string, language: string, isCorrect: boolea
 
   // Get existing stats from Chrome storage
   chrome.storage.local.get(['quizStats'], (data) => {
-    let stats: QuizStats = data.quizStats || {
+    let stats: SMUQuizStats = data.quizStats || {
       totalAttempts: 0,
       correctAnswers: 0,
       incorrectAnswers: 0,
@@ -36,7 +36,7 @@ export const saveQuizResult = (word: string, language: string, isCorrect: boolea
   });
 };
 
-export const getQuizStats = (): Promise<QuizStats> => {
+export const getQuizStats = (): Promise<SMUQuizStats> => {
   return new Promise((resolve) => {
     chrome.storage.local.get(['quizStats'], (data) => {
       resolve(data.quizStats || {

@@ -1,22 +1,22 @@
-//import React from 'react';
-import { useState, useEffect } from 'react';
+//import React from 'react';  useEffect 
+import { useState} from 'react';
 import { LanguageDropdown } from './components/languageDropdown';
-import { AutoLaunchToggle } from './components/autoLaunchToggle';
-import { useAutoLaunch } from './components/useAutoLaunch';
-import { generateSummary } from './services/getQuiz';
-//import { getVisibleText } from './utils/viewportScanner';
+// import { AutoLaunchToggle } from './components/autoLaunchToggle';
+// import { useAutoLaunch } from './components/useAutoLaunch';
+import { generateSMUQuiz } from './services/SMUgetQuiz';
 import { selectWord } from './services/getWord';
 import { createPopupWindow } from './components/createPopUp';
 import { getText } from './utils/getText';
-import { saveQuizResult } from './services/saveQuizResults';
-import { QuizStats } from './services/showQuizStats';
+import { saveQuizResult, getQuizStats } from './services/saveQuizResults';
+import { QuizStats, determineQuizMode } from './services/showQuizStats';
+import { generateSMUPractice } from './services/SMUgetPractice';
+import { QuizModeToggle } from './components/QuizModeToggleSMU';
 import './App.css';
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
-  const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
-
-  //console.log('App loaded');
+  // const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
+  const [manualTestMode, setManualTestMode] = useState(false);
 
   // const highlightWord = (text: string, word: string): string => {
   //   return text.replace(
@@ -25,9 +25,6 @@ function App() {
   //   );
   // };
 
-  //console.log('Text Highlighted');
-
-  //console.log('Text Retrieved');
 
   const generateTaskQuiz = async () => {
     if (selectedLanguage === 'Select Language') {
@@ -36,20 +33,22 @@ function App() {
     }
   
     try {
-      //console.log('Starting task quiz generation...');
       const visibleText = await getText();
-      //console.log('Retrieved text:', visibleText);
-  
       const selectedWord = await selectWord(visibleText);
-      //console.log('Selected word:', selectedWord);
-  
-      //const highlighted = highlightWord(visibleText, selectedWord);
-      //console.log('Text highlighted');
       
-      const quiz = await generateSummary(selectedWord, selectedLanguage);
-      // console.log('Quiz generated:', quiz);
+      // Get current quiz mode based on stats
+      const stats = await getQuizStats();
+      const quizMode = determineQuizMode(stats);
+      
+      // Generate quiz based on mode or manual override
+      const isTestMode = manualTestMode || quizMode === 'SMU_Test';
+      console.log('Quiz mode:', isTestMode ? 'Test' : 'Practice');
+      const quiz = isTestMode
+        ? await generateSMUQuiz(selectedWord, selectedLanguage)
+        : await generateSMUPractice(selectedWord, selectedLanguage);
+      console.log('Quiz:', quiz);
   
-      const result = await createPopupWindow(selectedWord, quiz);
+      const result = await createPopupWindow(selectedWord, quiz, isTestMode);
       saveQuizResult(
         selectedWord,
         selectedLanguage,
@@ -61,11 +60,11 @@ function App() {
     }
   };
 
-  useAutoLaunch(autoLaunchEnabled, generateTaskQuiz);
+  // useAutoLaunch(autoLaunchEnabled, generateTaskQuiz);
 
-  useEffect(() => {
-    console.log('Auto Launch state changed:', autoLaunchEnabled);
-  }, [autoLaunchEnabled]);
+  // useEffect(() => {
+  //   console.log('Auto Launch state changed:', autoLaunchEnabled);
+  // }, [autoLaunchEnabled]);
 
   return (
     <div className="container">
@@ -73,11 +72,15 @@ function App() {
       <div className="card">
         <h2>Quiz Stats</h2>
         <QuizStats />
-        <h2>Launch Task</h2>
-        <AutoLaunchToggle 
+        <h2>Quiz Settings</h2>
+        <QuizModeToggle
+          enabled={manualTestMode}
+          onToggle={setManualTestMode}
+        />
+        {/* <AutoLaunchToggle 
           enabled={autoLaunchEnabled}
           onToggle={setAutoLaunchEnabled}
-        />
+        /> */}
         <LanguageDropdown
           selectedLanguage={selectedLanguage}
           onLanguageSelect={setSelectedLanguage}

@@ -7,7 +7,7 @@ export interface OpenAIResponse {
     }>;
   }
   
-  export interface PopupWindowStyles {
+export interface PopupWindowStyles {
     body: React.CSSProperties;
     summaryContainer: React.CSSProperties;
     dragHandle: React.CSSProperties;

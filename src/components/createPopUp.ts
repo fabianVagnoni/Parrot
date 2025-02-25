@@ -6,35 +6,57 @@ interface QuizOptions {
   correct: string;
 }
 
+interface SMUPractice {
+  originalWord: string;
+  translatedWord: string;
+  originalWordDef: string;
+  exampleOriginal: string;
+  exampleTraslated: string;
+}
 
-export const createPopupWindow = async (chosenWord: string, quizJson: string): Promise<number> => {
+export const createPopupWindow = async (
+  chosenWord: string, 
+  quizJson: string, 
+  isTestMode: boolean
+): Promise<number> => {
   return new Promise((resolve) => {
-    const popup = window.open('', 'Quiz', 'width=600,height=400');
+    const popup = window.open('', 'Quiz', 'width=600,height=800');
     if (!popup) throw new Error('Failed to create popup window');
     
     try {
-      // console.log('Received quiz JSON:', quizJson); // Debug log
+      const data = JSON.parse(quizJson);
       
-      let quizOptions: QuizOptions;
-      try {
-        quizOptions = JSON.parse(quizJson);
-      } catch (parseError) {
-        console.error('JSON Parse error:', parseError);
-        throw new Error(`Invalid JSON format: ${parseError instanceof Error ? parseError.message : 'unknown error'}`);
-      }
-      
-      if (!quizOptions || !quizOptions.option1 || !quizOptions.option2 || 
-          !quizOptions.option3 || !quizOptions.option4 || !quizOptions.correct) {
-        throw new Error('Missing required quiz options');
+      if (isTestMode) {
+        if (!data.option1 || !data.option2 || !data.option3 || !data.option4 || !data.correct) {
+          throw new Error('Missing required quiz options');
+        }
+        popup.document.write(getTestTemplate(chosenWord, data));
+        setupTestMode(popup, data, resolve);
+      } else {
+        if (!data.originalWord || !data.translatedWord || !data.originalWordDef || 
+            !data.exampleOriginal || !data.exampleTraslated) {
+          throw new Error('Missing required practice data');
+        }
+        popup.document.write(getPracticeTemplate(chosenWord, data));
+        setupPracticeMode(popup, resolve);
       }
 
-      popup.document.write(`
-      <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Language Quiz</title>
-            <style>
-              body {
+      popup.document.close();
+    } catch (error) {
+      console.error('Error in createPopupWindow:', error);
+      throw error;
+    }
+  });
+};
+
+
+const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string => `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Language Quiz - Test Mode</title>
+      <style>
+        body {
                 font-family: Arial, sans-serif;
                 margin: 20px;
                 line-height: 1.6;
@@ -64,59 +86,166 @@ export const createPopupWindow = async (chosenWord: string, quizJson: string): P
                 opacity: 0.7;
                 cursor: not-allowed;
               }
-            </style>
-          </head>
-          <body>
-            <div>
-              <h2 style="color: #3498db; text-align: center;">Learn a new word!</h2>
-              <p>What is "${chosenWord}" translated to?</p>
-              <ul id="quiz-options-list" style="list-style-type: none; padding: 0;">
-                <li class="quiz-option" data-value="${quizOptions.option1}">${quizOptions.option1}</li>
-                <li class="quiz-option" data-value="${quizOptions.option2}">${quizOptions.option2}</li>
-                <li class="quiz-option" data-value="${quizOptions.option3}">${quizOptions.option3}</li>
-                <li class="quiz-option" data-value="${quizOptions.option4}">${quizOptions.option4}</li>
-              </ul>
-            </div>
-          </body>
-        </html>
-      `);
+      </style>
+    </head>
+    <body>
+      <div>
+        <h2 style="color: #3498db; text-align: center;">Test Your Knowledge!</h2>
+        <p>What is "${chosenWord}" translated to?</p>
+        <ul id="quiz-options-list" style="list-style-type: none; padding: 0;">
+          <li class="quiz-option" data-value="${quizOptions.option1}">${quizOptions.option1}</li>
+          <li class="quiz-option" data-value="${quizOptions.option2}">${quizOptions.option2}</li>
+          <li class="quiz-option" data-value="${quizOptions.option3}">${quizOptions.option3}</li>
+          <li class="quiz-option" data-value="${quizOptions.option4}">${quizOptions.option4}</li>
+        </ul>
+      </div>
+    </body>
+  </html>
+`;
 
-      // Add event listeners after the document is written
-      const correctAnswer = quizOptions.correct;
-      const options = popup.document.querySelectorAll('.quiz-option');
+
+const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): string => `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Language Learning - Practice Mode</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          line-height: 1.6;
+          color: #333;
+        }
+        .practice-container {
+          max-width: 500px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        .word-section {
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          padding: 20px;
+          margin-bottom: 20px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .definition-section {
+          background-color: #fff;
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          padding: 20px;
+          margin-bottom: 20px;
+        }
+        .example-section {
+          background-color: #f1f8ff;
+          border-radius: 8px;
+          padding: 20px;
+        }
+        .section-title {
+          color: #3498db;
+          font-size: 1.2em;
+          margin-bottom: 10px;
+          font-weight: 500;
+        }
+        .original-word {
+          font-size: 1.8em;
+          font-weight: bold;
+          color: #2c3e50;
+          margin-bottom: 10px;
+        }
+        .translated-word {
+          font-size: 1.6em;
+          color: #3498db;
+          margin-bottom: 15px;
+        }
+        .example {
+          padding: 10px;
+          border-left: 3px solid #3498db;
+          margin: 5px 0;
+        }
+        .reveal-button {
+          background-color: #3498db;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 1.1em;
+          width: 100%;
+          transition: background-color 0.3s ease;
+        }
+        .reveal-button:hover {
+          background-color: #2980b9;
+        }
+        .hidden {
+          display: none;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="practice-container">
+        <button id="revealBtn" class="reveal-button">Reveal Word Study</button>
+        
+        <div id="content" class="hidden">
+          <div class="word-section">
+            <div class="section-title">Word Study</div>
+            <div class="original-word">${chosenWord}</div>
+            <div class="translated-word">${practiceData.translatedWord}</div>
+          </div>
+
+          <div class="definition-section">
+            <div class="section-title">Definition</div>
+            <p>${practiceData.originalWordDef}</p>
+          </div>
+
+          <div class="example-section">
+            <div class="section-title">Example Usage</div>
+            <div class="example">
+              <p><em>${practiceData.exampleOriginal}</em></p>
+              <p>${practiceData.exampleTraslated}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>
+`;
+
+
+const setupTestMode = (popup: Window, quizOptions: QuizOptions, resolve: (value: number) => void) => {
+  const options = popup.document.querySelectorAll('.quiz-option');
+  options.forEach(option => {
+    option.addEventListener('click', function(this: HTMLElement) {
+      const selected = this.getAttribute('data-value');
+      const allOptions = popup.document.querySelectorAll('.quiz-option');
       
-      options.forEach(option => {
-        option.addEventListener('click', function(this: HTMLElement) {
-          const selected = this.getAttribute('data-value');
-          const allOptions = popup.document.querySelectorAll('.quiz-option');
-          
-          // Disable all options
-          allOptions.forEach(opt => {
-            (opt as HTMLElement).style.pointerEvents = 'none';
-            opt.classList.add('disabled');
-          });
-          
-          // Check answer and apply styles
-          if (selected === correctAnswer) {
-            this.classList.add('correct');
-            resolve(1);
-          } else {
-            this.classList.add('incorrect');
-            // Show correct answer
-            allOptions.forEach(opt => {
-              if (opt.textContent === correctAnswer) {
-                opt.classList.add('correct');
-              }
-            });
-            resolve(-1);
+      allOptions.forEach(opt => {
+        (opt as HTMLElement).style.pointerEvents = 'none';
+        opt.classList.add('disabled');
+      });
+      
+      if (selected === quizOptions.correct) {
+        this.classList.add('correct');
+        resolve(1);
+      } else {
+        this.classList.add('incorrect');
+        allOptions.forEach(opt => {
+          if (opt.textContent === quizOptions.correct) {
+            opt.classList.add('correct');
           }
         });
-      });
+        resolve(-1);
+      }
+    });
+  });
+};
 
-      popup.document.close();
-    } catch (error) {
-      console.error('Error in createPopupWindow:', error);
-      throw error;
-    }
+const setupPracticeMode = (popup: Window, resolve: (value: number) => void) => {
+  const revealBtn = popup.document.getElementById('revealBtn');
+  const content = popup.document.getElementById('content');
+  
+  revealBtn?.addEventListener('click', () => {
+    content?.classList.remove('hidden');
+    revealBtn.style.display = 'none';
+    resolve(0);
   });
 };

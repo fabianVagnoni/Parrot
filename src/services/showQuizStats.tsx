@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { getQuizStats } from './saveQuizResults';
-import { QuizStats as StatsType } from '../utils/interfaces';
+import { SMUQuizStats as StatsType } from '../utils/interfaces';
 import '../styles/QuizStats.css';
+
+export const determineQuizMode = (stats: StatsType | null): string => {
+  if (!stats) return 'SMU_Practice';
+  
+  const score = stats.correctAnswers - stats.incorrectAnswers;
+  return score < 10 ? 'SMU_Practice' : 'SMU_Test';
+};
 
 export const QuizStats: React.FC = () => {
   const [stats, setStats] = useState<StatsType | null>(null);
