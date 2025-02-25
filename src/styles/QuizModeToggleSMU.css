@@ -1,6 +1,7 @@
 .quiz-mode-toggle {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-top: 1rem;
   margin-bottom: 1rem;

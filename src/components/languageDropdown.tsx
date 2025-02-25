@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { CONFIG } from '../config/constants.ts';
 
 interface LanguageDropdownProps {
@@ -11,7 +11,8 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   onLanguageSelect
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const languages = CONFIG.SUPPORTED_LANGUAGES; // Assuming this exists in CONFIG
+  const languages = CONFIG.SUPPORTED_LANGUAGES;
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleLanguageSelect = (language: string) => {
     onLanguageSelect(language);
@@ -19,24 +20,48 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   };
 
   return (
-    <div className="dropdown">
-      <button onClick={() => setIsOpen(!isOpen)}>
+    <div className="dropdown" style={{ position: 'relative' }}>
+      <button 
+        ref={buttonRef}
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          padding: '0.5rem 1rem',
+          borderRadius: '4px',
+          border: '2px solid #3498db',
+          backgroundColor: 'white',
+          color: '#3498db',
+          cursor: 'pointer',
+          width: '100%',
+          fontWeight: 500,
+          transition: 'all 0.2s ease',
+        }}
+        onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.backgroundColor = '#3498db';
+          e.currentTarget.style.color = 'white';
+        }}
+        onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.backgroundColor = 'white';
+          e.currentTarget.style.color = '#3498db';
+        }}
+      >
         {selectedLanguage}
       </button>
       {isOpen && (
         <ul className="dropdown-menu" style={{
           listStyle: "none",
           padding: "0.2rem 0.5rem",
-          border: "2px solid",
+          border: "1px solid #ddd",
           position: "absolute",
-          boxShadow: "0 0.5rem 1rem rgba(0, 0, 0, 0.2)",
+          boxShadow: "0 -0.5rem 1rem rgba(0, 0, 0, 0.1)",
           borderRadius: "0.5rem",
           width: "100%",
-          top: "3rem",
+          bottom: "calc(100% + 0.5rem)", // Position above the button
           left: "50%",
           transform: "translateX(-50%)",
           backgroundColor: "white",
           zIndex: "1",
+          maxHeight: "200px",
+          overflowY: "auto"
         }}>
           {languages.map((language: string) => (
             <li 
@@ -46,6 +71,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
                 padding: "0.7rem",
                 cursor: "pointer",
                 borderRadius: "0.3rem",
+                transition: "background-color 0.2s ease"
               }}
               onMouseOver={(e: React.MouseEvent<HTMLLIElement>) => {
                 (e.target as HTMLLIElement).style.backgroundColor = "#f0f0f0";

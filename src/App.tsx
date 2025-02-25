@@ -68,27 +68,43 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Parrot</h1>
+      <div className="header">
+        <h1 className="title">🦜 Parrot</h1>
+        <p className="subtitle">Your Language Learning Assistant</p>
+      </div>
       <div className="card">
-        <h2>Quiz Stats</h2>
-        <QuizStats />
-        <h2>Quiz Settings</h2>
-        <QuizModeToggle
-          enabled={manualTestMode}
-          onToggle={setManualTestMode}
-        />
-        {/* <AutoLaunchToggle 
-          enabled={autoLaunchEnabled}
-          onToggle={setAutoLaunchEnabled}
-        /> */}
-        <LanguageDropdown
-          selectedLanguage={selectedLanguage}
-          onLanguageSelect={setSelectedLanguage}
-        />
-        <p>Click below to launch task</p>
-        <button onClick={generateTaskQuiz} className="button">
-          Launch Task
-        </button>
+        <div className="section">
+          <h2 className="section-title">📊 Quiz Statistics</h2>
+          <div className="section-content">
+            <QuizStats />
+          </div>
+        </div>
+        
+        <div className="section">
+          <h2 className="section-title">⚙️ Quiz Settings</h2>
+          <div className="section-content">
+            <div className="setting-item">
+              <QuizModeToggle
+                enabled={manualTestMode}
+                onToggle={setManualTestMode}
+              />
+            </div>
+            <div className="setting-item">
+              <LanguageDropdown
+                selectedLanguage={selectedLanguage}
+                onLanguageSelect={setSelectedLanguage}
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="launch-section">
+          <p className="launch-text">Ready for more learnings?</p>
+          <button onClick={generateTaskQuiz} className="launch-button">
+            <span className="button-icon">🎯</span>
+            Launch Quiz
+          </button>
+        </div>
       </div>
     </div>
   );
