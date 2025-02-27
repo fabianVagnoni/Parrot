@@ -57,42 +57,94 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
       <title>Language Quiz - Test Mode</title>
       <style>
         body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                line-height: 1.6;
-              }
-              .quiz-option {
-                padding: 10px;
-                margin: 5px 0;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-              }
-              .quiz-option:hover {
-                background-color: #f0f0f0;
-              }
-              .correct {
-                background-color: #90EE90 !important;
-                border-color: #3CB371;
-                cursor: default;
-              }
-              .incorrect {
-                background-color: #FFB6C1 !important;
-                border-color: #DC143C;
-                cursor: default;
-              }
-              .disabled {
-                opacity: 0.7;
-                cursor: not-allowed;
-              }
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          line-height: 1.6;
+          color: #333;
+          background-color: #f8f9fa;
+        }
+
+        .quiz-container {
+          max-width: 500px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-title {
+          color: #3498db;
+          text-align: center;
+          font-size: 1.8em;
+          margin-bottom: 1.5rem;
+          animation: fadeIn 0.8s ease-in;
+        }
+
+        .quiz-question {
+          font-size: 1.2em;
+          color: #2c3e50;
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+
+        .quiz-options-list {
+          list-style-type: none;
+          padding: 0;
+        }
+
+        .quiz-option {
+          padding: 12px 16px;
+          margin: 8px 0;
+          border: 2px solid #ddd;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          background-color: white;
+        }
+
+        .quiz-option:hover {
+          background-color: #f0f0f0;
+          transform: translateY(-2px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .correct {
+          background-color: #90EE90 !important;
+          border-color: #3CB371;
+          cursor: default;
+        }
+
+        .incorrect {
+          background-color: #FFB6C1 !important;
+          border-color: #DC143C;
+          cursor: default;
+        }
+
+        .disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
       </style>
     </head>
     <body>
-      <div>
-        <h2 style="color: #3498db; text-align: center;">Test Your Knowledge!</h2>
-        <p>What is "${chosenWord}" translated to?</p>
-        <ul id="quiz-options-list" style="list-style-type: none; padding: 0;">
+      <div class="quiz-container">
+        <h2 class="quiz-title">🦜 Test Your Knowledge!</h2>
+        <p class="quiz-question">What is "${chosenWord}" translated to?</p>
+        <ul class="quiz-options-list">
           <li class="quiz-option" data-value="${quizOptions.option1}">${quizOptions.option1}</li>
           <li class="quiz-option" data-value="${quizOptions.option2}">${quizOptions.option2}</li>
           <li class="quiz-option" data-value="${quizOptions.option3}">${quizOptions.option3}</li>

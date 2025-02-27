@@ -1,5 +1,5 @@
-//import React from 'react';  useEffect 
-import { useState} from 'react';
+//import React from 'react'; 
+import { useState, useEffect } from 'react';
 import { LanguageDropdown } from './components/languageDropdown';
 // import { AutoLaunchToggle } from './components/autoLaunchToggle';
 // import { useAutoLaunch } from './components/useAutoLaunch';
@@ -15,8 +15,22 @@ import './App.css';
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
-  // const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
   const [manualTestMode, setManualTestMode] = useState(false);
+
+  // Load saved language when component mounts
+  useEffect(() => {
+    chrome.storage.local.get(['selectedLanguage'], (result) => {
+      if (result.selectedLanguage) {
+        setSelectedLanguage(result.selectedLanguage);
+      }
+    });
+  }, []);
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+    chrome.storage.local.set({ selectedLanguage: language });
+  };
+
 
   // const highlightWord = (text: string, word: string): string => {
   //   return text.replace(
@@ -74,14 +88,21 @@ function App() {
       </div>
       <div className="card">
         <div className="section">
-          <h2 className="section-title">📊 Quiz Statistics</h2>
+          <h2 className="section-title">Current Level: Start-Me-Up</h2>
+          <div className="section-content">
+            <QuizStats />
+          </div>
+        </div>
+
+        <div className="section">
+          <h2 className="section-title">📊 Your Statistics</h2>
           <div className="section-content">
             <QuizStats />
           </div>
         </div>
         
         <div className="section">
-          <h2 className="section-title">⚙️ Quiz Settings</h2>
+          <h2 className="section-title">⚙️ Settings</h2>
           <div className="section-content">
             <div className="setting-item">
               <QuizModeToggle
@@ -90,10 +111,10 @@ function App() {
               />
             </div>
             <div className="setting-item">
-              <LanguageDropdown
-                selectedLanguage={selectedLanguage}
-                onLanguageSelect={setSelectedLanguage}
-              />
+            <LanguageDropdown
+            selectedLanguage={selectedLanguage}
+            onLanguageSelect={handleLanguageChange}
+          />
             </div>
           </div>
         </div>
@@ -102,7 +123,7 @@ function App() {
           <p className="launch-text">Ready for more learnings?</p>
           <button onClick={generateTaskQuiz} className="launch-button">
             <span className="button-icon">🎯</span>
-            Launch Quiz
+            Launch Task
           </button>
         </div>
       </div>

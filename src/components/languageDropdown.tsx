@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { CONFIG } from '../config/constants.ts';
 
 interface LanguageDropdownProps {
@@ -14,11 +14,24 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   const languages = CONFIG.SUPPORTED_LANGUAGES;
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // Load saved language when component mounts
+  useEffect(() => {
+    chrome.storage.local.get(['selectedLanguage'], (result) => {
+      if (result.selectedLanguage) {
+        onLanguageSelect(result.selectedLanguage);
+      }
+    });
+  }, []);
+
   const handleLanguageSelect = (language: string) => {
+    // Save to Chrome storage
+    chrome.storage.local.set({ selectedLanguage: language }, () => {
+      console.log('Language preference saved:', language);
+    });
+    
     onLanguageSelect(language);
     setIsOpen(false);
   };
-
   return (
     <div className="dropdown" style={{ position: 'relative' }}>
       <button 
