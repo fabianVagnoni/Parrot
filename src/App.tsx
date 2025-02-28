@@ -18,6 +18,8 @@ function App() {
   const [manualTestMode, setManualTestMode] = useState(false);
   const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
   const [currentMode, setCurrentMode] = useState<Mode>('parrot');
+  const [isResetting, setIsResetting] = useState(false);
+  const [statsVersion, setStatsVersion] = useState(0); // Add a version counter for stats
 
   // Load saved preferences when component mounts
   useEffect(() => {
@@ -34,6 +36,24 @@ function App() {
     });
   }, []);
 
+  // Set up a listener for changes to quizStats in Chrome storage
+  useEffect(() => {
+    const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+      if (areaName === 'local' && changes.quizStats) {
+        // Increment the stats version to trigger a re-render of the QuizStats component
+        setStatsVersion(prev => prev + 1);
+      }
+    };
+
+    // Add the listener
+    chrome.storage.onChanged.addListener(handleStorageChange);
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    };
+  }, []);
+
   const handleModeChange = (mode: Mode) => {
     setCurrentMode(mode);
     chrome.storage.local.set({ currentMode: mode });
@@ -47,6 +67,31 @@ function App() {
   const handleAutoLaunchToggle = (enabled: boolean) => {
     setAutoLaunchEnabled(enabled);
     chrome.storage.local.set({ autoLaunchEnabled: enabled });
+  };
+
+  const resetAllData = () => {
+    if (window.confirm('Are you sure you want to reset all your data? This will clear all your scores and statistics.')) {
+      setIsResetting(true);
+      
+      // Clear all data in chrome.storage
+      chrome.storage.local.clear(() => {
+        // Reset local state
+        setSelectedLanguage('Select Language');
+        setManualTestMode(false);
+        setAutoLaunchEnabled(false);
+        
+        // Keep the current mode for UI consistency
+        chrome.storage.local.set({ currentMode }, () => {
+          // Increment stats version to force a refresh
+          setStatsVersion(prev => prev + 1);
+          
+          setTimeout(() => {
+            setIsResetting(false);
+            alert('All data has been reset successfully!');
+          }, 500);
+        });
+      });
+    }
   };
 
   const generateTaskQuiz = async () => {
@@ -72,11 +117,16 @@ function App() {
       console.log('Quiz:', quiz);
   
       const result = await createPopupWindow(selectedWord, quiz, isTestMode);
-      saveQuizResult(
+      
+      // Save the quiz result - this will trigger the storage change listener
+      await saveQuizResult(
         selectedWord,
         selectedLanguage,
         result === 1
       );
+      
+      // Force a refresh of the stats component
+      setStatsVersion(prev => prev + 1);
     } catch (error) {
       console.error("Error in generateTaskQuiz:", error);
       alert(error instanceof Error ? error.message : 'An unknown error occurred');
@@ -115,7 +165,8 @@ function App() {
         <div className="section">
           <h2 className="section-title">Current Level: Start-Me-Up</h2>
           <div className="section-content">
-            <QuizStats />
+            {/* Pass the statsVersion as a key to force re-render when stats change */}
+            <QuizStats key={statsVersion} />
           </div>
         </div>
         
@@ -153,6 +204,17 @@ function App() {
             </span>
             {currentMode === 'parrot' ? 'Launch Task' : 'Start Reading'}
           </button>
+        </div>
+        
+        <div className="reset-container">
+          <button 
+            className="reset-button" 
+            onClick={resetAllData}
+            disabled={isResetting}
+          >
+            {isResetting ? 'Resetting...' : '🗑️ Reset All Data'}
+          </button>
+          <p className="reset-description">This will clear all your scores and statistics</p>
         </div>
       </div>
     </div>
