@@ -1,8 +1,6 @@
-//import React from 'react'; 
 import { useState, useEffect } from 'react';
 import { LanguageDropdown } from './components/languageDropdown';
-// import { AutoLaunchToggle } from './components/autoLaunchToggle';
-// import { useAutoLaunch } from './components/useAutoLaunch';
+import { AutoLaunchToggle } from './components/autoLaunchToggle';
 import { generateSMUQuiz } from './services/SMUgetQuiz';
 import { selectWord } from './services/getWord';
 import { createPopupWindow } from './components/createPopUp';
@@ -16,6 +14,8 @@ import './App.css';
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
   const [manualTestMode, setManualTestMode] = useState(false);
+  const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
+
 
   // Load saved language when component mounts
   useEffect(() => {
@@ -30,14 +30,6 @@ function App() {
     setSelectedLanguage(language);
     chrome.storage.local.set({ selectedLanguage: language });
   };
-
-
-  // const highlightWord = (text: string, word: string): string => {
-  //   return text.replace(
-  //     new RegExp(`(${word})`, 'gi'),
-  //     '<span style="background-color: yellow;">$1</span>'
-  //   );
-  // };
 
 
   const generateTaskQuiz = async () => {
@@ -74,11 +66,25 @@ function App() {
     }
   };
 
-  // useAutoLaunch(autoLaunchEnabled, generateTaskQuiz);
+    // Load saved preferences when component mounts
+    useEffect(() => {
+      chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled'], (result) => {
+        if (result.selectedLanguage) {
+          setSelectedLanguage(result.selectedLanguage);
+        }
+        // Load saved auto-launch state
+        if (result.autoLaunchEnabled !== undefined) {
+          setAutoLaunchEnabled(result.autoLaunchEnabled);
+        }
+      });
+    }, []);
+  
+    // Add handler for auto-launch toggle
+    const handleAutoLaunchToggle = (enabled: boolean) => {
+      setAutoLaunchEnabled(enabled);
+      chrome.storage.local.set({ autoLaunchEnabled: enabled });
+    };
 
-  // useEffect(() => {
-  //   console.log('Auto Launch state changed:', autoLaunchEnabled);
-  // }, [autoLaunchEnabled]);
 
   return (
     <div className="container">
@@ -93,13 +99,6 @@ function App() {
             <QuizStats />
           </div>
         </div>
-
-        <div className="section">
-          <h2 className="section-title">📊 Your Statistics</h2>
-          <div className="section-content">
-            <QuizStats />
-          </div>
-        </div>
         
         <div className="section">
           <h2 className="section-title">⚙️ Settings</h2>
@@ -108,6 +107,10 @@ function App() {
               <QuizModeToggle
                 enabled={manualTestMode}
                 onToggle={setManualTestMode}
+              />
+              <AutoLaunchToggle
+                enabled={autoLaunchEnabled}
+                onToggle={handleAutoLaunchToggle}
               />
             </div>
             <div className="setting-item">

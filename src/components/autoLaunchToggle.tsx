@@ -1,4 +1,6 @@
-import React from "react";
+import { useEffect } from 'react';
+import '../styles/AutoLaunchToggle.css';
+
 
 interface AutoLaunchToggleProps {
   enabled: boolean;
@@ -9,13 +11,27 @@ export const AutoLaunchToggle: React.FC<AutoLaunchToggleProps> = ({
   enabled,
   onToggle
 }) => {
+  // Load saved state when component mounts
+  useEffect(() => {
+    chrome.storage.local.get(['autoLaunchEnabled'], (result) => {
+      if (result.autoLaunchEnabled !== undefined) {
+        onToggle(result.autoLaunchEnabled);
+      }
+    });
+  }, []);
+
+  const handleToggle = (checked: boolean) => {
+    onToggle(checked);
+    chrome.storage.local.set({ autoLaunchEnabled: checked });
+  };
+
   return (
     <div className="auto-launch-toggle">
       <label className="switch">
         <input
           type="checkbox"
           checked={enabled}
-          onChange={(e) => onToggle(e.target.checked)}
+          onChange={(e) => handleToggle(e.target.checked)}
         />
         <span className="slider round"></span>
       </label>

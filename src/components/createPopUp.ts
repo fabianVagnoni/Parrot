@@ -20,31 +20,121 @@ export const createPopupWindow = async (
   isTestMode: boolean
 ): Promise<number> => {
   return new Promise((resolve) => {
-    const popup = window.open('', 'Quiz', 'width=600,height=800');
-    if (!popup) throw new Error('Failed to create popup window');
-    
-    try {
-      const data = JSON.parse(quizJson);
+    console.log('Creating popup window...');
+    // Check if we're in a background script context
+    if (typeof window === 'undefined') {
+      console.log('Creating popup window in background script...');
       
-      if (isTestMode) {
-        if (!data.option1 || !data.option2 || !data.option3 || !data.option4 || !data.correct) {
-          throw new Error('Missing required quiz options');
+      
+      function messageListener(
+        message: any, 
+        sender: chrome.runtime.MessageSender, 
+        sendResponse: (response?: any) => void
+      ) {
+        console.log('Received message:', message, 'from sender:', sender);
+        
+        if (message.type === 'QUIZ_READY') {
+          console.log('Sending quiz data to popup...');
+          try {
+            chrome.runtime.sendMessage({
+              type: 'INIT_QUIZ',
+              data: {
+                chosenWord, 
+                quizJson,
+                isTestMode
+              }
+            });
+            sendResponse({ success: true });
+          } catch (error) {
+            console.error('Error sending message to popup:', error);
+            sendResponse({ success: false, error: String(error) });
+          }
+          return true;
         }
-        popup.document.write(getTestTemplate(chosenWord, data));
-        setupTestMode(popup, data, resolve);
-      } else {
-        if (!data.originalWord || !data.translatedWord || !data.originalWordDef || 
-            !data.exampleOriginal || !data.exampleTraslated) {
-          throw new Error('Missing required practice data');
+      
+        if (message.type === 'QUIZ_COMPLETE') {
+          console.log('Quiz completed:', message.result);
+          const result = Number(message.result) || 0;
+          resolve(result);
+          sendResponse({ success: true });
+          return false;
         }
-        popup.document.write(getPracticeTemplate(chosenWord, data));
-        setupPracticeMode(popup, resolve);
+        return true; // Keep the message channel open
       }
 
-      popup.document.close();
-    } catch (error) {
-      console.error('Error in createPopupWindow:', error);
-      throw error;
+      // Register the listener
+      chrome.runtime.onMessage.addListener(messageListener);
+
+      // Create the popup window
+      const popupUrl = chrome.runtime.getURL('popupAuto.html');
+      console.log('Attempting to open URL:', popupUrl);
+      chrome.windows.create({
+        url: popupUrl,
+        type: 'popup',
+        width: 600,
+        height: 800,
+        focused: true
+      }).then(popupWindow => {
+        try {
+          console.log('Popup window created:', popupWindow);
+          console.log('Popup window ID:', popupWindow?.id);
+          
+          if (!popupWindow?.id) {
+            console.error('Popup window ID not found');
+            try {
+              chrome.runtime.onMessage.removeListener(messageListener);
+              console.log('Listener removed successfully');
+            } catch (listenerError) {
+              console.error('Error removing listener:', listenerError);
+            }
+            resolve(0);
+            return;
+          }
+          console.log('Popup window created successfully with ID:', popupWindow.id);
+        } catch (error) {
+          console.error('Unexpected error in popup window creation handler:', error);
+          try {
+            chrome.runtime.onMessage.removeListener(messageListener);
+          } catch {}
+          resolve(0);
+        }
+      }).catch(error => {
+        console.error('Error creating popup window:', error);
+        try {
+          chrome.runtime.onMessage.removeListener(messageListener);
+        } catch (listenerError) {
+          console.error('Error removing listener:', listenerError);
+        }
+        resolve(0);
+      });
+    } else {
+      // Regular window context (app.tsx)
+      const popup = window.open('', 'Quiz', 'width=600,height=800');
+      if (!popup) throw new Error('Failed to create popup window');
+      
+      try {
+        const data = JSON.parse(quizJson);
+        
+        if (isTestMode) {
+          if (!data.option1 || !data.option2 || !data.option3 || !data.option4 || !data.correct) {
+            throw new Error('Missing required quiz options');
+          }
+          popup.document.write(getTestTemplate(chosenWord, data));
+          setupTestMode(popup, data, resolve);
+        } else {
+          if (!data.originalWord || !data.translatedWord || !data.originalWordDef || 
+              !data.exampleOriginal || !data.exampleTraslated) {
+            throw new Error('Missing required practice data');
+          }
+          popup.document.write(getPracticeTemplate(chosenWord, data));
+          setupPracticeMode(popup, resolve);
+        }
+
+        popup.document.close();
+      } catch (error) {
+        console.error('Error in createPopupWindow:', error);
+        throw error;
+      }
     }
   });
 };

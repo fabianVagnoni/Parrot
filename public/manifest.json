@@ -15,12 +15,18 @@
     "host_permissions": [
         "https://*/*",
         "http://*/*",
-        "<all_urls>"
+        "<all_urls>",
+        "*://*.wikipedia.org/*"
     ],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module"
     },
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
-    }
+    },
+    "web_accessible_resources": [{
+        "resources": ["popupAuto.html", "popupAuto.js"],
+        "matches": ["<all_urls>"]
+    }]
 }
