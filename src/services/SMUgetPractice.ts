@@ -15,11 +15,11 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
     You must return the following JSON object and ¡¡¡NOTHING ELSE!!!:\n\{\
         'originalWord': '" + selectedWord + "' UNCHANGED,\
         'translatedWord': 'Translate the word to " + selectedLanguage + "',\
-        'translatedWordPronunciation': 'Provide the pronunciation of the translated word in " + selectedLanguage + "',\
+        'translatedWordPronunciation': 'After translating the word to " + selectedLanguage + ", write how that translation sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + "). For example, if the original word is in English \"children\" and we translate it to Spanish \"niños\", write how \"niños\" sounds using English writing system, like \"neen-yos\"',\
         'originalWordDef': 'Define '" + selectedWord + "' in its ORIGINAL language (the same language as the input word)',\
         'exampleOriginal': 'Write an example sentence using '" + selectedWord + "' in its ORIGINAL language (the same language as the input word)',\
         'exampleTraslated': 'Translate the example sentence to " + selectedLanguage + "',\
-        'exampleTranslatedPronunciation': 'Provide the pronunciation of the translated example in " + selectedLanguage + "'\
+        'exampleTranslatedPronunciation': 'Write how the " + selectedLanguage + " translation sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + "). Use only letters and writing conventions from the original language'\
       }\
     Please, ensure that your output CAN BE PARSED by the following TypeScript interface:\n\
     interface QuizOptions {\

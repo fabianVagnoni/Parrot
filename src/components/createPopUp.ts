@@ -340,6 +340,25 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
           font-size: 1.6em;
           color: #3498db;
           margin-bottom: 15px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .pronunciation {
+          font-size: 0.9em;
+          color: #666;
+          font-style: italic;
+          margin-top: 4px;
+        }
+        .translated-example {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin-top: 8px;
+        }
+        .option-text {
+          font-size: 1.1em;
+          font-weight: 500;
         }
         .example {
           padding: 10px;
@@ -431,7 +450,10 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
           <div class="word-section">
             <div class="section-title">Word Study</div>
             <div class="original-word">${chosenWord}</div>
-            <div class="translated-word">${practiceData.translatedWord}</div>
+            <div class="translated-word">
+              <span class="option-text">${practiceData.translatedWord}</span>
+              <span class="pronunciation">${practiceData.translatedWordPronunciation}</span>
+            </div>
           </div>
 
           <div class="definition-section">
@@ -443,7 +465,10 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
             <div class="section-title">Example Usage</div>
             <div class="example">
               <p><em>${practiceData.exampleOriginal}</em></p>
-              <p>${practiceData.exampleTraslated}</p>
+              <div class="translated-example">
+                <span class="option-text">${practiceData.exampleTraslated}</span>
+                <span class="pronunciation">${practiceData.exampleTraslatedPronunciation}</span>
+              </div>
             </div>
           </div>
         </div>

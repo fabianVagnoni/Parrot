@@ -16,15 +16,15 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
     option1, option2, option3, option4, correct. Be sure that the correct answer is always one of the 4 options (chosen word translated in " + selectedLanguage +  "). No answers text should have accent/special characters.\n\
     You must return the following JSON object and NOTHING ELSE:\n\{\
         'option1': 'yourSelectedOption1',\
-        'option1Pronunciation': 'yourSelectedOption1Pronunciation',\
+        'option1Pronunciation': 'Write how this " + selectedLanguage + " word sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + ")',\
         'option2': 'yourSelectedOption2',\
-        'option2Pronunciation': 'yourSelectedOption2Pronunciation',\
+        'option2Pronunciation': 'Write how this " + selectedLanguage + " word sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + ")',\
         'option3': 'yourSelectedOption3',\
-        'option3Pronunciation': 'yourSelectedOption3Pronunciation',\
+        'option3Pronunciation': 'Write how this " + selectedLanguage + " word sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + ")',\
         'option4': 'yourSelectedOption4',\
-        'option4Pronunciation': 'yourSelectedOption4Pronunciation',\
+        'option4Pronunciation': 'Write how this " + selectedLanguage + " word sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + ")',\
         'correct': 'correctOptionAmongThePreviousOptions',\
-        'correctPronunciation': 'correctOptionAmongThePreviousOptionsPronunciation'\
+        'correctPronunciation': 'Write how the correct " + selectedLanguage + " word sounds using the writing system of the ORIGINAL language (the language of " + selectedWord + ")'\
       }\
     Please, ensure that your output CAN BE PARSED by the following TypeScript interface:\n\
     interface QuizOptions {\
