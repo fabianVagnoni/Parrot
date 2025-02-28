@@ -18,7 +18,7 @@
 
 .title {
   font-size: 2rem;
-  color: #2c3e50;
+  color: var(--theme-color);
   margin-bottom: 0.5rem;
   font-weight: 700;
   letter-spacing: -1px;
@@ -51,8 +51,8 @@
 }
 
 .section-title {
+  color: var(--theme-color);
   font-size: 1rem;
-  color: #2c3e50;
   margin-bottom: 1.5rem;
   font-weight: 600;
 }
@@ -127,7 +127,7 @@
 }
 
 .launch-button {
-  background-color: #3498db;
+  background-color: var(--theme-color);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -141,7 +141,7 @@
 }
 
 .launch-button:hover {
-  background-color: #2980b9;
+  background-color: var(--theme-color-secondary);
   transform: translateY(-1px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -195,4 +195,75 @@
 
 .switch input:focus + .slider {
   box-shadow: 0 0 1px #2196F3;
+}
+
+/* Tab Navigation Styles */
+.tab-navigation {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 2rem;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 24px;
+  background: #f1f3f4;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #5f6368;
+}
+
+.tab-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background: #e8eaed;
+}
+
+.tab-button.active {
+  background: white;
+  color: var(--theme-color);
+}
+
+.tab-button.active::after {
+  background: var(--theme-color);
+}
+
+/* Theme Colors */
+:root {
+  --parrot-primary: #3498db;
+  --parrot-secondary: #2980b9;
+  --owl-primary: #8B4513;
+  --owl-secondary: #654321;
+}
+
+/* Theme-specific styles */
+.theme-parrot {
+  --theme-color: var(--parrot-primary);
+  --theme-color-secondary: var(--parrot-secondary);
+}
+
+.theme-owl {
+  --theme-color: var(--owl-primary);
+  --theme-color-secondary: var(--owl-secondary);
 }

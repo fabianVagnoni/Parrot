@@ -11,26 +11,43 @@ import { generateSMUPractice } from './services/SMUgetPractice';
 import { QuizModeToggle } from './components/QuizModeToggleSMU';
 import './App.css';
 
+type Mode = 'parrot' | 'owl';
+
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
   const [manualTestMode, setManualTestMode] = useState(false);
   const [autoLaunchEnabled, setAutoLaunchEnabled] = useState(false);
+  const [currentMode, setCurrentMode] = useState<Mode>('parrot');
 
-
-  // Load saved language when component mounts
+  // Load saved preferences when component mounts
   useEffect(() => {
-    chrome.storage.local.get(['selectedLanguage'], (result) => {
+    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode'], (result) => {
       if (result.selectedLanguage) {
         setSelectedLanguage(result.selectedLanguage);
       }
+      if (result.autoLaunchEnabled !== undefined) {
+        setAutoLaunchEnabled(result.autoLaunchEnabled);
+      }
+      if (result.currentMode) {
+        setCurrentMode(result.currentMode as Mode);
+      }
     });
   }, []);
+
+  const handleModeChange = (mode: Mode) => {
+    setCurrentMode(mode);
+    chrome.storage.local.set({ currentMode: mode });
+  };
 
   const handleLanguageChange = (language: string) => {
     setSelectedLanguage(language);
     chrome.storage.local.set({ selectedLanguage: language });
   };
 
+  const handleAutoLaunchToggle = (enabled: boolean) => {
+    setAutoLaunchEnabled(enabled);
+    chrome.storage.local.set({ autoLaunchEnabled: enabled });
+  };
 
   const generateTaskQuiz = async () => {
     if (selectedLanguage === 'Select Language') {
@@ -66,32 +83,34 @@ function App() {
     }
   };
 
-    // Load saved preferences when component mounts
-    useEffect(() => {
-      chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled'], (result) => {
-        if (result.selectedLanguage) {
-          setSelectedLanguage(result.selectedLanguage);
-        }
-        // Load saved auto-launch state
-        if (result.autoLaunchEnabled !== undefined) {
-          setAutoLaunchEnabled(result.autoLaunchEnabled);
-        }
-      });
-    }, []);
-  
-    // Add handler for auto-launch toggle
-    const handleAutoLaunchToggle = (enabled: boolean) => {
-      setAutoLaunchEnabled(enabled);
-      chrome.storage.local.set({ autoLaunchEnabled: enabled });
-    };
-
-
   return (
-    <div className="container">
+    <div className={`container theme-${currentMode}`}>
+      <nav className="tab-navigation">
+        <button 
+          className={`tab-button ${currentMode === 'parrot' ? 'active' : ''}`}
+          onClick={() => handleModeChange('parrot')}
+        >
+          🦜 Parrot
+        </button>
+        <button 
+          className={`tab-button ${currentMode === 'owl' ? 'active' : ''}`}
+          onClick={() => handleModeChange('owl')}
+        >
+          🦉 Owl
+        </button>
+      </nav>
+
       <div className="header">
-        <h1 className="title">🦜 Parrot</h1>
-        <p className="subtitle">Your Language Learning Assistant</p>
+        <h1 className="title">
+          {currentMode === 'parrot' ? '🦜 Parrot' : '🦉 Owl'}
+        </h1>
+        <p className="subtitle">
+          {currentMode === 'parrot' 
+            ? 'Your Language Learning Assistant'
+            : 'Your Contextual Comprehension Tutor'}
+        </p>
       </div>
+
       <div className="card">
         <div className="section">
           <h2 className="section-title">Current Level: Start-Me-Up</h2>
@@ -114,19 +133,25 @@ function App() {
               />
             </div>
             <div className="setting-item">
-            <LanguageDropdown
-            selectedLanguage={selectedLanguage}
-            onLanguageSelect={handleLanguageChange}
-          />
+              <LanguageDropdown
+                selectedLanguage={selectedLanguage}
+                onLanguageSelect={handleLanguageChange}
+              />
             </div>
           </div>
         </div>
         
         <div className="launch-section">
-          <p className="launch-text">Ready for more learnings?</p>
+          <p className="launch-text">
+            {currentMode === 'parrot' 
+              ? 'Ready for more learning?'
+              : 'Ready to improve your comprehension?'}
+          </p>
           <button onClick={generateTaskQuiz} className="launch-button">
-            <span className="button-icon">🎯</span>
-            Launch Task
+            <span className="button-icon">
+              {currentMode === 'parrot' ? '🎯' : '📚'}
+            </span>
+            {currentMode === 'parrot' ? 'Launch Task' : 'Start Reading'}
           </button>
         </div>
       </div>
