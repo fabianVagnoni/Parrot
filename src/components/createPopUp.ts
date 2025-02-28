@@ -1,17 +1,24 @@
 interface QuizOptions {
   option1: string;
+  option1Pronunciation: string;
   option2: string;
+  option2Pronunciation: string;
   option3: string;
+  option3Pronunciation: string;
   option4: string;
+  option4Pronunciation: string;
   correct: string;
+  correctPronunciation: string;
 }
 
 interface SMUPractice {
   originalWord: string;
   translatedWord: string;
+  translatedWordPronunciation: string;
   originalWordDef: string;
   exampleOriginal: string;
   exampleTraslated: string;
+  exampleTraslatedPronunciation: string;
 }
 
 export const createPopupWindow = async (
@@ -184,6 +191,9 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
         }
 
         .quiz-option {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
           padding: 12px 16px;
           margin: 8px 0;
           border: 2px solid #ddd;
@@ -191,6 +201,18 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
           cursor: pointer;
           transition: all 0.3s ease;
           background-color: white;
+        }
+
+        .option-text {
+          font-size: 1.1em;
+          font-weight: 500;
+        }
+
+        .pronunciation {
+          font-size: 0.9em;
+          color: #666;
+          font-style: italic;
+          margin-top: 4px;
         }
 
         .quiz-option:hover {
@@ -205,10 +227,18 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
           cursor: default;
         }
 
+        .correct .pronunciation {
+          color: #2ecc71;
+        }
+
         .incorrect {
           background-color: #FFB6C1 !important;
           border-color: #DC143C;
           cursor: default;
+        }
+
+        .incorrect .pronunciation {
+          color: #e74c3c;
         }
 
         .disabled {
@@ -235,10 +265,22 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
         <h2 class="quiz-title">🦜 Test Your Knowledge!</h2>
         <p class="quiz-question">What is "${chosenWord}" translated to?</p>
         <ul class="quiz-options-list">
-          <li class="quiz-option" data-value="${quizOptions.option1}">${quizOptions.option1}</li>
-          <li class="quiz-option" data-value="${quizOptions.option2}">${quizOptions.option2}</li>
-          <li class="quiz-option" data-value="${quizOptions.option3}">${quizOptions.option3}</li>
-          <li class="quiz-option" data-value="${quizOptions.option4}">${quizOptions.option4}</li>
+          <li class="quiz-option" data-value="${quizOptions.option1}">
+            <span class="option-text">${quizOptions.option1}</span>
+            <span class="pronunciation">${quizOptions.option1Pronunciation}</span>
+          </li>
+          <li class="quiz-option" data-value="${quizOptions.option2}">
+            <span class="option-text">${quizOptions.option2}</span>
+            <span class="pronunciation">${quizOptions.option2Pronunciation}</span>
+          </li>
+          <li class="quiz-option" data-value="${quizOptions.option3}">
+            <span class="option-text">${quizOptions.option3}</span>
+            <span class="pronunciation">${quizOptions.option3Pronunciation}</span>
+          </li>
+          <li class="quiz-option" data-value="${quizOptions.option4}">
+            <span class="option-text">${quizOptions.option4}</span>
+            <span class="pronunciation">${quizOptions.option4Pronunciation}</span>
+          </li>
         </ul>
       </div>
     </body>

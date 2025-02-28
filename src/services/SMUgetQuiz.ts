@@ -16,18 +16,28 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
     option1, option2, option3, option4, correct. Be sure that the correct answer is always one of the 4 options (chosen word translated in " + selectedLanguage +  "). No answers text should have accent/special characters.\n\
     You must return the following JSON object and NOTHING ELSE:\n\{\
         'option1': 'yourSelectedOption1',\
+        'option1Pronunciation': 'yourSelectedOption1Pronunciation',\
         'option2': 'yourSelectedOption2',\
+        'option2Pronunciation': 'yourSelectedOption2Pronunciation',\
         'option3': 'yourSelectedOption3',\
+        'option3Pronunciation': 'yourSelectedOption3Pronunciation',\
         'option4': 'yourSelectedOption4',\
-        'correct': 'correctOptionAmongThePreviousOptions'\
+        'option4Pronunciation': 'yourSelectedOption4Pronunciation',\
+        'correct': 'correctOptionAmongThePreviousOptions',\
+        'correctPronunciation': 'correctOptionAmongThePreviousOptionsPronunciation'\
       }\
     Please, ensure that your output CAN BE PARSED by the following TypeScript interface:\n\
     interface QuizOptions {\
       option1: string;\
+      option1Pronunciation: string;\
       option2: string;\
+      option2Pronunciation: string;\
       option3: string;\
+      option3Pronunciation: string;\
       option4: string;\
+      option4Pronunciation: string;\
       correct: string;\
+      correctPronunciation: string;\
     }\
     quizOptions = JSON.parse(quizJson);\
     That is, be careful that your output DOES NOT CAUSE THE FOLLOWING ERROR:\

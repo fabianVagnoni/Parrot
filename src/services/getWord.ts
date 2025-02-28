@@ -11,6 +11,8 @@ const buildSearchPrompt = (context: string): string => {
   return "You are an educational tool to help people learn a new language.\
           You will be provided with a sentence or a body of text and you to identify and select an ideal word to learn in a new language.\
           Your output can ONLY be the single word you selected and no other text.\
+          It must be a word that is very relevant to the context and the user's needs.\
+          Consider that the user is browsing the web and reading content that might be relevant to their profession or hobbies. So be sure to select a word that is relevant for this hobbie or profession.\
           Be sure Capitalize the first letter of your output word. Here's the text: \n)" + context + "\n";
 }
 

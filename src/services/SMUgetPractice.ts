@@ -13,21 +13,24 @@ const buildPrompt = (selectedWord: string, selectedLanguage: string): string => 
     Generate these 4 things based on this concept:" + selectedWord + ". Only output the following 4 things, please. NO additional text. \
     Display in json format and let the first letter always be capitalized.\
     You must return the following JSON object and ¡¡¡NOTHING ELSE!!!:\n\{\
-        'originalWord': '"+selectedWord +"' UNCHANGED ,\
-        'translatedWord': '"+selectedWord+" in "+selectedLanguage+"',\
-        'originalWordDef': '"+selectedWord +" definition in the ORIGINAL LANGUAGE THAT WAS PASSED',\
-        'exampleOriginal': '"+selectedWord +"' used in one representative sentence in the ORIGINAL LANGUAGE THAT WAS PASSED,\
-        'exampleTraslated': exampleOriginal translation to "+selectedLanguage+"\
+        'originalWord': '" + selectedWord + "' UNCHANGED,\
+        'translatedWord': 'Translate the word to " + selectedLanguage + "',\
+        'translatedWordPronunciation': 'Provide the pronunciation of the translated word in " + selectedLanguage + "',\
+        'originalWordDef': 'Define '" + selectedWord + "' in its ORIGINAL language (the same language as the input word)',\
+        'exampleOriginal': 'Write an example sentence using '" + selectedWord + "' in its ORIGINAL language (the same language as the input word)',\
+        'exampleTraslated': 'Translate the example sentence to " + selectedLanguage + "',\
+        'exampleTranslatedPronunciation': 'Provide the pronunciation of the translated example in " + selectedLanguage + "'\
       }\
     Please, ensure that your output CAN BE PARSED by the following TypeScript interface:\n\
     interface QuizOptions {\
       originalWord: string;\
       translatedWord: string;\
+      translatedWordPronunciation: string;\
       originalWordDef: string;\
       exampleOriginal: string;\
       exampleTraslated: string;\
+      exampleTranslatedPronunciation: string;\
     }\
-    quizOptions = JSON.parse(quizJson);\
     That is, be careful that your output ¡¡¡DOES NOT CAUSE THE FOLLOWING ERROR!!!:\
     Unexpected token '`', ```json\
     That is: do NOT return ANYTHING ELSE than the JSON OBJECT, NO INTRODUCTION, NO TEXT, NOTHING.\
