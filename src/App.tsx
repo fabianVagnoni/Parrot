@@ -22,10 +22,11 @@ function App() {
   const [isResetting, setIsResetting] = useState(false);
   const [statsVersion, setStatsVersion] = useState(0); // Add a version counter for stats
   const [wordThreshold, setWordThreshold] = useState(30); // Default to 30 (300 words)
+  const [settingsExpanded, setSettingsExpanded] = useState(false); // Add state for settings visibility
 
   // Load saved preferences when component mounts
   useEffect(() => {
-    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode', 'wordThreshold'], (result) => {
+    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode', 'wordThreshold', 'settingsExpanded'], (result) => {
       if (result.selectedLanguage) {
         setSelectedLanguage(result.selectedLanguage);
       }
@@ -37,6 +38,9 @@ function App() {
       }
       if (result.wordThreshold !== undefined) {
         setWordThreshold(result.wordThreshold);
+      }
+      if (result.settingsExpanded !== undefined) {
+        setSettingsExpanded(result.settingsExpanded);
       }
     });
   }, []);
@@ -167,6 +171,13 @@ function App() {
     }
   };
 
+  // Add a function to toggle settings visibility
+  const toggleSettings = () => {
+    const newState = !settingsExpanded;
+    setSettingsExpanded(newState);
+    chrome.storage.local.set({ settingsExpanded: newState });
+  };
+
   return (
     <div className={`container theme-${currentMode}`}>
       <nav className="tab-navigation">
@@ -205,8 +216,17 @@ function App() {
         </div>
         
         <div className="section">
-          <h2 className="section-title">⚙️ Settings</h2>
-          <div className="section-content">
+          <h2 className="section-title settings-toggle" onClick={toggleSettings}>
+            <span>⚙️ Settings</span>
+            <span className={`settings-toggle-icon ${settingsExpanded ? 'expanded' : ''}`}>
+              {settingsExpanded ? '▲' : '▼'}
+            </span>
+          </h2>
+          <div className="section-content" style={{ 
+            maxHeight: settingsExpanded ? '1000px' : '0',
+            opacity: settingsExpanded ? 1 : 0,
+            transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out'
+          }}>
             <div className="setting-item">
               <QuizModeToggle
                 enabled={manualTestMode}
@@ -261,4 +281,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
