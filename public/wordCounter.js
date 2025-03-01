@@ -67,6 +67,28 @@
       setTimeout(() => {
         countVisibleWords();
       }, 500);
+    } else if (message.type === 'UPDATE_WORD_THRESHOLD') {
+      // Update the word threshold
+      const oldThreshold = wordThreshold;
+      wordThreshold = message.wordThreshold || 300;
+      
+      console.log(`%c[Word Counter] Word threshold updated: ${oldThreshold} → ${wordThreshold} words`, 'color: #FF9800; font-weight: bold');
+      
+      // Recalculate progress percentage with new threshold
+      const currentProgress = cumulativeWordCount - lastTriggerCount;
+      const percentage = Math.round((currentProgress / wordThreshold) * 100);
+      
+      console.log(`%c[Word Counter] Current progress with new threshold: ${currentProgress}/${wordThreshold} (${percentage}%)`, 'color: #FF9800');
+      
+      // Create a visual marker in the console
+      console.log('%c-------- THRESHOLD UPDATED --------', 'color: #FF9800; background-color: #FFF3E0; font-weight: bold; padding: 3px; border-radius: 3px;');
+      
+      // Force an immediate count update to check if we've reached the new threshold
+      setTimeout(() => {
+        countVisibleWords();
+      }, 500);
+      
+      sendResponse({ success: true });
     }
     return true;
   });

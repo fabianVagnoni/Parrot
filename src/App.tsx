@@ -9,6 +9,7 @@ import { saveQuizResult, getQuizStats } from './services/saveQuizResults';
 import { QuizStats, determineQuizMode } from './services/showQuizStats';
 import { generateSMUPractice } from './services/SMUgetPractice';
 import { QuizModeToggle } from './components/QuizModeToggleSMU';
+import { ThresholdSlider } from './components/ThresholdSlider';
 import './App.css';
 
 type Mode = 'parrot' | 'owl';
@@ -20,10 +21,11 @@ function App() {
   const [currentMode, setCurrentMode] = useState<Mode>('parrot');
   const [isResetting, setIsResetting] = useState(false);
   const [statsVersion, setStatsVersion] = useState(0); // Add a version counter for stats
+  const [wordThreshold, setWordThreshold] = useState(30); // Default to 30 (300 words)
 
   // Load saved preferences when component mounts
   useEffect(() => {
-    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode'], (result) => {
+    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode', 'wordThreshold'], (result) => {
       if (result.selectedLanguage) {
         setSelectedLanguage(result.selectedLanguage);
       }
@@ -32,6 +34,9 @@ function App() {
       }
       if (result.currentMode) {
         setCurrentMode(result.currentMode as Mode);
+      }
+      if (result.wordThreshold !== undefined) {
+        setWordThreshold(result.wordThreshold);
       }
     });
   }, []);
@@ -69,6 +74,31 @@ function App() {
     chrome.storage.local.set({ autoLaunchEnabled: enabled });
   };
 
+  const handleThresholdChange = (value: number) => {
+    setWordThreshold(value);
+    chrome.storage.local.set({ wordThreshold: value });
+    
+    // Calculate the actual word count threshold
+    const actualThreshold = Math.round((1000 * value) / 100);
+    console.log(`Word threshold set to ${value} (${actualThreshold} words)`);
+    
+    // Update active tabs with the new threshold if auto-launch is enabled
+    if (autoLaunchEnabled) {
+      chrome.tabs.query({ active: true }, (tabs) => {
+        tabs.forEach(tab => {
+          if (tab.id) {
+            chrome.tabs.sendMessage(tab.id, {
+              type: 'UPDATE_WORD_THRESHOLD',
+              wordThreshold: actualThreshold
+            }).catch(() => {
+              // Ignore errors - tab might not have content script
+            });
+          }
+        });
+      });
+    }
+  };
+
   const resetAllData = () => {
     if (window.confirm('Are you sure you want to reset all your data? This will clear all your scores and statistics.')) {
       setIsResetting(true);
@@ -79,9 +109,13 @@ function App() {
         setSelectedLanguage('Select Language');
         setManualTestMode(false);
         setAutoLaunchEnabled(false);
+        setWordThreshold(30); // Reset to default
         
         // Keep the current mode for UI consistency
-        chrome.storage.local.set({ currentMode }, () => {
+        chrome.storage.local.set({ 
+          currentMode,
+          wordThreshold: 30 // Save the default threshold
+        }, () => {
           // Increment stats version to force a refresh
           setStatsVersion(prev => prev + 1);
           
@@ -178,11 +212,17 @@ function App() {
                 enabled={manualTestMode}
                 onToggle={setManualTestMode}
               />
+            </div>
+            <div className="setting-item">
               <AutoLaunchToggle
                 enabled={autoLaunchEnabled}
                 onToggle={handleAutoLaunchToggle}
               />
             </div>
+            <ThresholdSlider
+              value={wordThreshold}
+              onChange={handleThresholdChange}
+            />
             <div className="setting-item">
               <LanguageDropdown
                 selectedLanguage={selectedLanguage}

@@ -62,11 +62,25 @@
 }
 
 .setting-item {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .setting-item:last-child {
   margin-bottom: 0;
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.setting-icon {
+  font-size: 1.2rem;
 }
 
 /* Toggle Switch Styles - Enhanced existing styles */
@@ -310,4 +324,54 @@
   font-size: 0.6rem;
   margin-top: 0.5rem;
   font-style: italic;
+}
+
+/* Threshold Slider Styles */
+.threshold-slider {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.slider-container {
+  display: block !important;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.slider {
+  width: 100%;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.slider-description {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  display: block !important;
+}
+
+/* Theme-specific slider styles */
+.theme-parrot .slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+}
+
+.theme-parrot .slider::-moz-range-thumb {
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+}
+
+.theme-owl .slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #9b59b6, #3498db);
+}
+
+.theme-owl .slider::-moz-range-thumb {
+  background: linear-gradient(135deg, #9b59b6, #3498db);
+}
+
+.threshold-display {
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 8px 0;
+  color: var(--theme-color);
 }

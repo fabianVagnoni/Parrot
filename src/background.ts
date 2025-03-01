@@ -163,9 +163,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url && tab.url.includes('wikipedia.org')) {
     console.log(`%c[Background] Wikipedia page loaded: ${tab.url}`, 'color: #673AB7');
     
-    chrome.storage.local.get(['autoLaunchEnabled', 'selectedLanguage'], (result) => {
+    chrome.storage.local.get(['autoLaunchEnabled', 'selectedLanguage', 'wordThreshold'], (result) => {
       if (result.autoLaunchEnabled && result.selectedLanguage) {
         console.log(`%c[Background] Auto-launch enabled for language: ${result.selectedLanguage}`, 'color: #673AB7');
+        
+        // Calculate the actual word threshold based on the slider value
+        const sliderValue = result.wordThreshold || 30; // Default to 30 (300 words)
+        const actualThreshold = Math.round((1000 * sliderValue) / 100);
+        
+        console.log(`%c[Background] Word threshold set to: ${actualThreshold} words (slider value: ${sliderValue})`, 'color: #673AB7');
         
         // Inject the content script that will monitor word count
         chrome.scripting.executeScript({
@@ -178,7 +184,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           chrome.tabs.sendMessage(tabId, {
             type: 'INIT_WORD_COUNTER',
             language: result.selectedLanguage,
-            wordThreshold: 300
+            wordThreshold: actualThreshold
           }).then(() => {
             console.log('%c[Background] Word counter initialized with settings', 'color: #673AB7');
             console.log('%c-------- WORD COUNTING STARTED --------', 'color: #673AB7; background-color: #EDE7F6; font-weight: bold; padding: 3px; border-radius: 3px;');
