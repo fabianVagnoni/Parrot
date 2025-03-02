@@ -241,64 +241,66 @@ function App() {
           </div>
         )}
         
-        <div className="section">
-          <h2 className="section-title">⚙️ Settings</h2>
-          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <button 
-              className="settings-toggle" 
-              onClick={toggleSettings}
-            >
-              <span>{settingsExpanded ? 'Hide Settings' : 'Show Settings'}</span>
-              <span className={`settings-toggle-icon ${settingsExpanded ? 'expanded' : ''}`}>
-                {settingsExpanded ? '▲' : '▼'}
-              </span>
+        {/* Settings Section - Only visible in Parrot mode */}
+        {currentMode === 'parrot' && (
+          <div className="section">
+            <h2 className="section-title">⚙️ Settings</h2>
+            <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+              <button 
+                className="settings-toggle" 
+                onClick={toggleSettings}
+              >
+                <span>{settingsExpanded ? 'Hide Settings' : 'Show Settings'}</span>
+                <span className={`settings-toggle-icon ${settingsExpanded ? 'expanded' : ''}`}>
+                  {settingsExpanded ? '▲' : '▼'}
+                </span>
+              </button>
+            </div>
+            <div className="section-content" style={{ 
+              maxHeight: settingsExpanded ? '1000px' : '0',
+              opacity: settingsExpanded ? 1 : 0,
+              transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out'
+            }}>
+              <div className="setting-item">
+                <QuizModeToggle
+                  enabled={manualTestMode}
+                  onToggle={setManualTestMode}
+                />
+              </div>
+              <div className="setting-item">
+                <AutoLaunchToggle
+                  enabled={autoLaunchEnabled}
+                  onToggle={handleAutoLaunchToggle}
+                />
+              </div>
+              <div className="setting-item">
+                <ThresholdSlider
+                  value={wordThreshold}
+                  onChange={handleThresholdChange}
+                />
+              </div>
+              <div className="setting-item">
+                <LanguageDropdown
+                  selectedLanguage={selectedLanguage}
+                  onLanguageSelect={handleLanguageChange}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Launch Section - Only visible in Parrot mode */}
+        {currentMode === 'parrot' && (
+          <div className="launch-section">
+            <p className="launch-text">
+              Ready for more learning?
+            </p>
+            <button onClick={generateTaskQuiz} className="launch-button">
+              <span className="button-icon">🎯</span>
+              Launch Task
             </button>
           </div>
-          <div className="section-content" style={{ 
-            maxHeight: settingsExpanded ? '1000px' : '0',
-            opacity: settingsExpanded ? 1 : 0,
-            transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out'
-          }}>
-            <div className="setting-item">
-              <QuizModeToggle
-                enabled={manualTestMode}
-                onToggle={setManualTestMode}
-              />
-            </div>
-            <div className="setting-item">
-              <AutoLaunchToggle
-                enabled={autoLaunchEnabled}
-                onToggle={handleAutoLaunchToggle}
-              />
-            </div>
-            <div className="setting-item">
-              <ThresholdSlider
-                value={wordThreshold}
-                onChange={handleThresholdChange}
-              />
-            </div>
-            <div className="setting-item">
-              <LanguageDropdown
-                selectedLanguage={selectedLanguage}
-                onLanguageSelect={handleLanguageChange}
-              />
-            </div>
-          </div>
-        </div>
-        
-        <div className="launch-section">
-          <p className="launch-text">
-            {currentMode === 'parrot' 
-              ? 'Ready for more learning?'
-              : 'Ready to improve your comprehension?'}
-          </p>
-          <button onClick={generateTaskQuiz} className="launch-button">
-            <span className="button-icon">
-              {currentMode === 'parrot' ? '🎯' : '📚'}
-            </span>
-            {currentMode === 'parrot' ? 'Launch Task' : 'Start Reading'}
-          </button>
-        </div>
+        )}
         
         <div className="reset-container">
           <button 
