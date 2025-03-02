@@ -5,21 +5,34 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: white;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Import theme colors from App.css */
+  --parrot-primary: #00D0AF;
+  --parrot-secondary: #04A287;
+  --parrot-background: #F8F3BB;
+  --parrot-accent: #9DE0C0;
+  --parrot-light: #FFFDE9;
+  
+  --owl-primary: #E07231;
+  --owl-secondary: #AD531F;
+  --owl-background: #E6D070;
+  --owl-accent: #EDE08A;
+  --owl-dark: #733C01;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--parrot-secondary);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--parrot-primary);
 }
 
 body {
@@ -28,6 +41,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: white;
 }
 
 h1 {
@@ -42,12 +56,12 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--owl-secondary);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--parrot-accent);
 }
 button:focus,
 button:focus-visible {
@@ -56,13 +70,13 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: var(--owl-dark);
+    background-color: white;
   }
   a:hover {
-    color: #747bff;
+    color: var(--parrot-primary);
   }
   button {
-    background-color: #f9f9f9;
+    background-color: var(--parrot-accent);
   }
 }

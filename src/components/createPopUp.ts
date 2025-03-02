@@ -153,12 +153,29 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
     <head>
       <title>Language Quiz - Test Mode</title>
       <style>
+        :root {
+          --parrot-primary: #00A67E;
+          --parrot-secondary: #00BF8F;
+          --parrot-background: #FFFFFF;
+          --parrot-accent: #00D1A0;
+          --parrot-light: #E6F8F4;
+          
+          --owl-primary: #8C6A03;
+          --owl-secondary: #BF9004;
+          --owl-background: #FFFFFF;
+          --owl-accent: #E6D070;
+          --owl-light: #FFF8D9;
+          
+          --text-dark: #2c3e50;
+          --text-light: #666;
+        }
+        
         body {
           font-family: Arial, sans-serif;
           margin: 20px;
           line-height: 1.6;
-          color: #333;
-          background-color: #f8f9fa;
+          color: var(--text-dark);
+          background-color: var(--parrot-background);
         }
 
         .quiz-container {
@@ -171,7 +188,7 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
         }
 
         .quiz-title {
-          color: #3498db;
+          color: var(--parrot-primary);
           text-align: center;
           font-size: 1.8em;
           margin-bottom: 1.5rem;
@@ -180,7 +197,7 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
 
         .quiz-question {
           font-size: 1.2em;
-          color: #2c3e50;
+          color: var(--text-dark);
           margin-bottom: 1.5rem;
           text-align: center;
         }
@@ -210,35 +227,36 @@ const getTestTemplate = (chosenWord: string, quizOptions: QuizOptions): string =
 
         .pronunciation {
           font-size: 0.9em;
-          color: #666;
+          color: var(--text-light);
           font-style: italic;
           margin-top: 4px;
         }
 
         .quiz-option:hover {
-          background-color: #f0f0f0;
+          background-color: var(--parrot-light);
           transform: translateY(-2px);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          border-color: var(--parrot-primary);
         }
 
         .correct {
-          background-color: #90EE90 !important;
-          border-color: #3CB371;
+          background-color: var(--parrot-light) !important;
+          border-color: var(--parrot-primary);
           cursor: default;
         }
 
         .correct .pronunciation {
-          color: #2ecc71;
+          color: var(--parrot-primary);
         }
 
         .incorrect {
-          background-color: #FFB6C1 !important;
-          border-color: #DC143C;
+          background-color: var(--owl-light) !important;
+          border-color: var(--owl-primary);
           cursor: default;
         }
 
         .incorrect .pronunciation {
-          color: #e74c3c;
+          color: var(--owl-primary);
         }
 
         .disabled {
@@ -294,11 +312,29 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
     <head>
       <title>Language Learning - Practice Mode</title>
       <style>
+        :root {
+          --parrot-primary: #00A67E;
+          --parrot-secondary: #00BF8F;
+          --parrot-background: #FFFFFF;
+          --parrot-accent: #00D1A0;
+          --parrot-light: #E6F8F4;
+          
+          --owl-primary: #8C6A03;
+          --owl-secondary: #BF9004;
+          --owl-background: #FFFFFF;
+          --owl-accent: #E6D070;
+          --owl-light: #FFF8D9;
+          
+          --text-dark: #2c3e50;
+          --text-light: #666;
+        }
+        
         body {
           font-family: Arial, sans-serif;
           margin: 20px;
           line-height: 1.6;
-          color: #333;
+          color: var(--text-dark);
+          background-color: var(--parrot-background);
         }
         .practice-container {
           max-width: 500px;
@@ -306,26 +342,26 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
           padding: 20px;
         }
         .word-section {
-          background-color: #f8f9fa;
+          background-color: var(--parrot-light);
           border-radius: 8px;
           padding: 20px;
           margin-bottom: 20px;
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .definition-section {
-          background-color: #fff;
-          border: 1px solid #e9ecef;
+          background-color: white;
+          border: 1px solid var(--parrot-accent);
           border-radius: 8px;
           padding: 20px;
           margin-bottom: 20px;
         }
         .example-section {
-          background-color: #f1f8ff;
+          background-color: var(--owl-light);
           border-radius: 8px;
           padding: 20px;
         }
         .section-title {
-          color: #3498db;
+          color: var(--parrot-primary);
           font-size: 1.2em;
           margin-bottom: 10px;
           font-weight: 500;
@@ -333,12 +369,12 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
         .original-word {
           font-size: 1.8em;
           font-weight: bold;
-          color: #2c3e50;
+          color: var(--text-dark);
           margin-bottom: 10px;
         }
         .translated-word {
           font-size: 1.6em;
-          color: #3498db;
+          color: var(--parrot-primary);
           margin-bottom: 15px;
           display: flex;
           flex-direction: column;
@@ -346,7 +382,7 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
         }
         .pronunciation {
           font-size: 0.9em;
-          color: #666;
+          color: var(--text-light);
           font-style: italic;
           margin-top: 4px;
         }
@@ -362,11 +398,11 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
         }
         .example {
           padding: 10px;
-          border-left: 3px solid #3498db;
+          border-left: 3px solid var(--owl-primary);
           margin: 5px 0;
         }
         .reveal-button {
-          background-color: #3498db;
+          background-color: var(--parrot-primary);
           color: white;
           border: none;
           padding: 12px 24px;
@@ -377,7 +413,7 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
           transition: background-color 0.3s ease;
         }
         .reveal-button:hover {
-          background-color: #2980b9;
+          background-color: var(--parrot-secondary);
         }
         .hidden {
           display: none;
@@ -386,13 +422,13 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
           text-align: center;
           margin-bottom: 24px;
           font-size: 1.4em;
-          color: #2c3e50;
+          color: var(--parrot-primary);
           font-weight: 500;
           animation: fadeIn 0.8s ease-in;
         }
 
         .word-section {
-          background-color: #f8f9fa;
+          background-color: var(--parrot-light);
           border-radius: 8px;
           padding: 20px;
           margin-bottom: 20px;
@@ -402,8 +438,8 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
         }
 
         .definition-section {
-          background-color: #fff;
-          border: 1px solid #e9ecef;
+          background-color: white;
+          border: 1px solid var(--parrot-accent);
           border-radius: 8px;
           padding: 20px;
           margin-bottom: 20px;
@@ -413,7 +449,7 @@ const getPracticeTemplate = (chosenWord: string, practiceData: SMUPractice): str
         }
 
         .example-section {
-          background-color: #f1f8ff;
+          background-color: var(--owl-light);
           border-radius: 8px;
           padding: 20px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 

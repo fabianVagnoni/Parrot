@@ -28,21 +28,21 @@ export const ThresholdSlider = ({ value, onChange }: ThresholdSliderProps) => {
   };
   
   return (
-    <div className="setting-item" style={{ display: 'block', marginBottom: '20px' }}>
-      <div className="setting-label" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+    <div className="threshold-slider">
+      <div className="setting-label">
         <span style={{ marginRight: '8px', fontSize: '1.2rem' }}>📊</span>
         <span>Word Threshold: <strong>{displayValue}</strong> words</span>
       </div>
-      <div style={{ width: '100%', padding: '0 8px' }}>
+      <div className="slider-container">
         <input
           type="range"
           min="10"
           max="100"
           value={sliderValue}
           onChange={handleChange}
-          style={{ width: '100%', height: '8px' }}
+          className="slider"
         />
-        <div style={{ fontSize: '0.75rem', color: '#7f8c8d', textAlign: 'center', marginTop: '4px' }}>
+        <div className="slider-description">
           Trigger task after reading {displayValue} words
         </div>
       </div>

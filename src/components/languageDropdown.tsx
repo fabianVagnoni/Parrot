@@ -40,21 +40,21 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         style={{
           padding: '0.5rem 1rem',
           borderRadius: '4px',
-          border: '2px solid #3498db',
+          border: '2px solid var(--theme-color)',
           backgroundColor: 'white',
-          color: '#3498db',
+          color: 'var(--theme-color)',
           cursor: 'pointer',
           width: '100%',
           fontWeight: 500,
           transition: 'all 0.2s ease',
         }}
         onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => {
-          e.currentTarget.style.backgroundColor = '#3498db';
+          e.currentTarget.style.backgroundColor = 'var(--theme-color)';
           e.currentTarget.style.color = 'white';
         }}
         onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => {
           e.currentTarget.style.backgroundColor = 'white';
-          e.currentTarget.style.color = '#3498db';
+          e.currentTarget.style.color = 'var(--theme-color)';
         }}
       >
         {selectedLanguage}
@@ -63,7 +63,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
         <ul className="dropdown-menu" style={{
           listStyle: "none",
           padding: "0.2rem 0.5rem",
-          border: "1px solid #ddd",
+          border: "1px solid var(--parrot-accent)",
           position: "absolute",
           boxShadow: "0 -0.5rem 1rem rgba(0, 0, 0, 0.1)",
           borderRadius: "0.5rem",
@@ -71,7 +71,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
           bottom: "calc(100% + 0.5rem)", // Position above the button
           left: "50%",
           transform: "translateX(-50%)",
-          backgroundColor: "white",
+          backgroundColor: "var(--parrot-light)",
           zIndex: "1",
           maxHeight: "200px",
           overflowY: "auto"
@@ -87,7 +87,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
                 transition: "background-color 0.2s ease"
               }}
               onMouseOver={(e: React.MouseEvent<HTMLLIElement>) => {
-                (e.target as HTMLLIElement).style.backgroundColor = "#f0f0f0";
+                (e.target as HTMLLIElement).style.backgroundColor = "var(--parrot-accent)";
               }}
               onMouseOut={(e: React.MouseEvent<HTMLLIElement>) => {
                 (e.target as HTMLLIElement).style.backgroundColor = "transparent";

@@ -1,8 +1,8 @@
 .stats-container {
     padding: 0.5rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--parrot-accent);
     border-radius: 8px;
-    background-color: #fff;
+    background-color: var(--parrot-light);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin: 1rem 0;
   }
@@ -21,25 +21,25 @@
   .score-title {
     margin: 0;
     font-size: 1rem;
-    color: #333;
+    color: var(--owl-dark);
   }
   
   .positive {
-    color: #28a745;
+    color: var(--parrot-primary);
     font-weight: bold;
   }
   
   .negative {
-    color: #dc3545;
+    color: var(--owl-primary);
     font-weight: bold;
   }
   
   .expand-button {
     padding: 0.5rem 1rem;
-    border: 2px solid #3498db;
+    border: 2px solid var(--parrot-primary);
     border-radius: 4px;
     background-color: white;
-    color: #3498db;
+    color: var(--parrot-primary);
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s ease;
@@ -47,14 +47,14 @@
   }
   
   .expand-button:hover {
-    background-color: #3498db;
+    background-color: var(--parrot-primary);
     color: white;
   }
   
   .expanded-stats {
     margin-top: 0.75rem;
     padding-top: 0.75rem;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--parrot-accent);
   }
   
   .stats-grid {
@@ -65,25 +65,40 @@
   
   .stats-item {
     padding: 0.5rem;
-    background-color: #f8f9fa;
+    background-color: var(--parrot-background);
     border-radius: 4px;
     font-size: 0.6rem;
   }
   
   .stats-item span {
     font-weight: 500;
-    color: #666;
+    color: var(--parrot-secondary);
     margin-right: 0.5rem;
   }
   
   .stats-message {
     padding: 1rem;
     text-align: center;
-    color: #666;
+    color: var(--owl-dark);
   }
   
   .error {
-    color: #dc3545;
-    border: 1px solid #dc3545;
+    color: var(--owl-primary);
+    border: 1px solid var(--owl-primary);
     border-radius: 4px;
+  }
+  
+  /* Theme-specific styles */
+  .theme-owl .positive {
+    color: var(--owl-accent);
+  }
+  
+  .theme-owl .expand-button {
+    border: 2px solid var(--owl-primary);
+    color: var(--owl-primary);
+  }
+  
+  .theme-owl .expand-button:hover {
+    background-color: var(--owl-primary);
+    color: white;
   }

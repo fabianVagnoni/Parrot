@@ -26,7 +26,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--parrot-accent);
   transition: .4s;
 }
 
@@ -37,13 +37,17 @@
   width: 14px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
+  background-color: var(--parrot-light);
   transition: .4s;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--parrot-primary);
+}
+
+.theme-owl input:checked + .slider {
+  background-color: var(--owl-primary);
 }
 
 input:checked + .slider:before {
@@ -60,5 +64,13 @@ input:checked + .slider:before {
 
 .toggle-label {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--owl-dark);
+}
+
+.theme-parrot .toggle-label {
+  color: var(--parrot-secondary);
+}
+
+.theme-owl .toggle-label {
+  color: var(--owl-accent);
 }

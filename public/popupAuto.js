@@ -1,52 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const style = document.createElement('style');
-  style.textContent = `
-    .close-button {
-      background: none;
-      border: none;
-      color: #666;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 5px 10px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      transition: all 0.2s ease;
-    }
-
-    .close-button:hover {
-      background-color: #f0f0f0;
-      color: #333;
-    }
-
-    .quiz-option {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 12px 16px !important;
-    }
-
-    .option-text {
-      font-size: 1.1em;
-      font-weight: 500;
-    }
-
-    .pronunciation {
-      font-size: 0.9em;
-      color: #666;
-      font-style: italic;
-      margin-top: 4px;
-    }
-
-    .correct .pronunciation {
-      color: #2ecc71;
-    }
-
-    .incorrect .pronunciation {
-      color: #e74c3c;
-    }
-  `;
-  document.head.appendChild(style);
-
+  // No need to add styles here anymore as they're in the HTML file
+  
   // Notify background script that popup is ready
   console.log('Popup is ready');
   try {
@@ -122,19 +76,19 @@ function getTestTemplate(chosenWord, quizOptions) {
       <ul class="quiz-options-list">
         <li class="quiz-option" data-value="${quizOptions.option1}">
           <span class="option-text">${quizOptions.option1}</span>
-          <span class="pronunciation">${quizOptions.option1Pronunciation}</span>
+          <span class="pronunciation">${quizOptions.option1Pronunciation || ''}</span>
         </li>
         <li class="quiz-option" data-value="${quizOptions.option2}">
           <span class="option-text">${quizOptions.option2}</span>
-          <span class="pronunciation">${quizOptions.option2Pronunciation}</span>
+          <span class="pronunciation">${quizOptions.option2Pronunciation || ''}</span>
         </li>
         <li class="quiz-option" data-value="${quizOptions.option3}">
           <span class="option-text">${quizOptions.option3}</span>
-          <span class="pronunciation">${quizOptions.option3Pronunciation}</span>
+          <span class="pronunciation">${quizOptions.option3Pronunciation || ''}</span>
         </li>
         <li class="quiz-option" data-value="${quizOptions.option4}">
           <span class="option-text">${quizOptions.option4}</span>
-          <span class="pronunciation">${quizOptions.option4Pronunciation}</span>
+          <span class="pronunciation">${quizOptions.option4Pronunciation || ''}</span>
         </li>
       </ul>
     </div>
@@ -156,7 +110,7 @@ function getPracticeTemplate(chosenWord, practiceData) {
           <div class="original-word">${chosenWord}</div>
           <div class="translated-word">
             <span class="option-text">${practiceData.translatedWord}</span>
-            <span class="pronunciation">${practiceData.translatedWordPronunciation}</span>
+            <span class="pronunciation">${practiceData.translatedWordPronunciation || ''}</span>
           </div>
         </div>
 
@@ -171,7 +125,7 @@ function getPracticeTemplate(chosenWord, practiceData) {
             <p><em>${practiceData.exampleOriginal}</em></p>
             <div class="translated-example">
               <span class="option-text">${practiceData.exampleTraslated}</span>
-              <span class="pronunciation">${practiceData.exampleTranslatedPronunciation}</span>
+              <span class="pronunciation">${practiceData.exampleTraslatedPronunciation || ''}</span>
             </div>
           </div>
         </div>
@@ -210,7 +164,7 @@ function setupTestMode(window, quizOptions, callback) {
         const message = document.createElement('p');
         message.textContent = '✅ Correct! Well done!';
         message.style.textAlign = 'center';
-        message.style.color = '#2ecc71';
+        message.style.color = 'var(--parrot-primary)';
         message.style.fontWeight = 'bold';
         message.style.marginTop = '20px';
         this.parentNode.appendChild(message);
@@ -219,7 +173,8 @@ function setupTestMode(window, quizOptions, callback) {
         this.classList.add('incorrect');
         // Highlight the correct answer
         allOptions.forEach(opt => {
-          if (opt.querySelector('.option-text').textContent === quizOptions.correct) {
+          const optionText = opt.querySelector('.option-text').textContent;
+          if (optionText === quizOptions.correct) {
             opt.classList.add('correct');
           }
         });
@@ -227,7 +182,7 @@ function setupTestMode(window, quizOptions, callback) {
         const message = document.createElement('p');
         message.textContent = '❌ Not quite. The correct answer is shown in green.';
         message.style.textAlign = 'center';
-        message.style.color = '#e74c3c';
+        message.style.color = 'var(--owl-primary)';
         message.style.fontWeight = 'bold';
         message.style.marginTop = '20px';
         this.parentNode.appendChild(message);
@@ -249,7 +204,7 @@ function setupPracticeMode(window, callback) {
     const message = document.createElement('p');
     message.textContent = '✨ Great job studying! Keep it up!';
     message.style.textAlign = 'center';
-    message.style.color = '#3498db';
+    message.style.color = 'var(--parrot-primary)';
     message.style.fontWeight = 'bold';
     message.style.marginTop = '20px';
     content?.appendChild(message);

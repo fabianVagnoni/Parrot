@@ -1,3 +1,9 @@
+/* Add this at the top of the file to ensure it has high priority */
+/* Global fix for floating slider issue */
+body > input.slider {
+  display: none !important; /* Hide any slider that's a direct child of body */
+}
+
 #root {
   max-width: 600px;
   margin: 0 auto;
@@ -25,7 +31,7 @@
 }
 
 .subtitle {
-  color: #7f8c8d;
+  color: var(--owl-dark);
   font-size: 1.1rem;
   margin: 0;
 }
@@ -38,10 +44,18 @@
   padding: 2rem;
 }
 
+.theme-parrot .card {
+  background: var(--parrot-light);
+}
+
+.theme-owl .card {
+  background: var(--owl-accent);
+}
+
 .section {
   margin-bottom: 1.75rem;
   padding-bottom: 1.75rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--parrot-accent);
 }
 
 .section:last-child {
@@ -61,12 +75,16 @@
   margin-left: .75rem;
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
+  position: relative;
+  z-index: 1;
 }
 
 .setting-item {
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
+  position: relative;
+  width: 100%;
 }
 
 .setting-item:last-child {
@@ -106,17 +124,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--parrot-accent);
   transition: .4s;
   border-radius: 34px;
 }
 
 .switch input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--parrot-primary);
+}
+
+.theme-owl .switch input:checked + .slider {
+  background-color: var(--owl-primary);
 }
 
 .switch input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px var(--parrot-primary);
+}
+
+.theme-owl .switch input:focus + .slider {
+  box-shadow: 0 0 1px var(--owl-primary);
 }
 
 .switch .slider:before {
@@ -126,7 +152,7 @@
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: var(--parrot-light);
   transition: .4s;
   border-radius: 50%;
 }
@@ -137,7 +163,7 @@
 }
 
 .launch-text {
-  color: #7f8c8d;
+  color: var(--owl-dark);
   margin-bottom: 1rem;
   font-size: 0.8rem;
 }
@@ -204,13 +230,13 @@
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: var(--parrot-light);
   transition: .4s;
   border-radius: 50%;
 }
 
 .switch input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px var(--parrot-primary);
 }
 
 /* Tab Navigation Styles */
@@ -225,7 +251,7 @@
 .tab-button {
   flex: 1;
   padding: 12px 24px;
-  background: #f1f3f4;
+  background: var(--parrot-light);
   border: none;
   border-radius: 8px 8px 0 0;
   font-size: 1rem;
@@ -238,7 +264,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #5f6368;
+  color: var(--owl-dark);
 }
 
 .tab-button::after {
@@ -253,7 +279,7 @@
 }
 
 .tab-button:hover {
-  background: #e8eaed;
+  background: var(--parrot-accent);
 }
 
 .tab-button.active {
@@ -267,21 +293,32 @@
 
 /* Theme Colors */
 :root {
-  --parrot-primary: #3498db;
-  --parrot-secondary: #2980b9;
-  --owl-primary: #8B4513;
-  --owl-secondary: #654321;
+  /* Updated color palette */
+  --parrot-primary: #00D0AF;
+  --parrot-secondary: #04A287;
+  --parrot-background: #F8F3BB;
+  --parrot-accent: #9DE0C0;
+  --parrot-light: #FFFDE9;
+  
+  --owl-primary: #E07231;
+  --owl-secondary: #AD531F;
+  --owl-background: #E6D070;
+  --owl-accent: #EDE08A;
+  --owl-dark: #733C01;
 }
 
 /* Theme-specific styles */
 .theme-parrot {
   --theme-color: var(--parrot-primary);
   --theme-color-secondary: var(--parrot-secondary);
+  background-color: white;
 }
 
 .theme-owl {
   --theme-color: var(--owl-primary);
   --theme-color-secondary: var(--owl-secondary);
+  background-color: white;
+  color: var(--owl-dark);
 }
 
 /* Reset Button Styles */
@@ -291,11 +328,11 @@
   align-items: center;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--parrot-accent);
 }
 
 .reset-button {
-  background-color: #e74c3c;
+  background-color: var(--owl-primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -309,20 +346,20 @@
 }
 
 .reset-button:hover {
-  background-color: #c0392b;
+  background-color: var(--owl-secondary);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .reset-button:disabled {
-  background-color: #95a5a6;
+  background-color: var(--parrot-accent);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
 .reset-description {
-  color: #7f8c8d;
+  color: var(--owl-dark);
   font-size: 0.6rem;
   margin-top: 0.5rem;
   font-style: italic;
@@ -332,12 +369,14 @@
 .threshold-slider {
   margin-bottom: 16px;
   width: 100%;
+  position: relative;
 }
 
 .slider-container {
   display: block !important;
   margin-top: 10px;
   width: 100%;
+  position: relative;
 }
 
 .slider {
@@ -345,30 +384,42 @@
   display: block !important;
   opacity: 1 !important;
   visibility: visible !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: auto !important;
+}
+
+/* Fix for any floating input.slider elements */
+input.slider {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: auto !important;
 }
 
 .slider-description {
   margin-top: 5px;
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: var(--owl-dark);
   display: block !important;
 }
 
 /* Theme-specific slider styles */
 .theme-parrot .slider::-webkit-slider-thumb {
-  background: linear-gradient(135deg, #3498db, #2ecc71);
+  background: linear-gradient(135deg, var(--parrot-primary), var(--parrot-accent));
 }
 
 .theme-parrot .slider::-moz-range-thumb {
-  background: linear-gradient(135deg, #3498db, #2ecc71);
+  background: linear-gradient(135deg, var(--parrot-primary), var(--parrot-accent));
 }
 
 .theme-owl .slider::-webkit-slider-thumb {
-  background: linear-gradient(135deg, #9b59b6, #3498db);
+  background: linear-gradient(135deg, var(--owl-primary), var(--owl-accent));
 }
 
 .theme-owl .slider::-moz-range-thumb {
-  background: linear-gradient(135deg, #9b59b6, #3498db);
+  background: linear-gradient(135deg, var(--owl-primary), var(--owl-accent));
 }
 
 .threshold-display {

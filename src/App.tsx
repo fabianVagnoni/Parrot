@@ -10,6 +10,7 @@ import { QuizStats, determineQuizMode } from './services/showQuizStats';
 import { generateSMUPractice } from './services/SMUgetPractice';
 import { QuizModeToggle } from './components/QuizModeToggleSMU';
 import { ThresholdSlider } from './components/ThresholdSlider';
+import { WordHistory } from './components/WordHistory';
 import './App.css';
 
 type Mode = 'parrot' | 'owl';
@@ -151,14 +152,32 @@ function App() {
         ? await generateSMUQuiz(selectedWord, selectedLanguage)
         : await generateSMUPractice(selectedWord, selectedLanguage);
       console.log('Quiz:', quiz);
+      
+      // Extract translated word from quiz data
+      let translatedWord: string | undefined;
+      try {
+        const quizData = JSON.parse(quiz);
+        // For practice mode, the translated word is directly available
+        if (!isTestMode && quizData.translatedWord) {
+          translatedWord = quizData.translatedWord;
+        } 
+        // For test mode, the translated word is the correct answer
+        else if (isTestMode && quizData.correct) {
+          translatedWord = quizData.correct;
+        }
+      } catch (error) {
+        console.error('Error parsing quiz data:', error);
+        // Continue without translated word if parsing fails
+      }
   
       const result = await createPopupWindow(selectedWord, quiz, isTestMode);
       
-      // Save the quiz result - this will trigger the storage change listener
+      // Save the quiz result with translated word - this will trigger the storage change listener
       await saveQuizResult(
         selectedWord,
         selectedLanguage,
-        result === 1
+        result === 1,
+        translatedWord
       );
       
       // Force a refresh of the stats component
@@ -212,6 +231,16 @@ function App() {
           </div>
         </div>
         
+        {/* Word History Section - Only visible in Owl mode */}
+        {currentMode === 'owl' && (
+          <div className="section">
+            <h2 className="section-title">📚 Word History</h2>
+            <div className="section-content">
+              <WordHistory statsVersion={statsVersion} />
+            </div>
+          </div>
+        )}
+        
         <div className="section">
           <h2 className="section-title">⚙️ Settings</h2>
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
@@ -242,10 +271,12 @@ function App() {
                 onToggle={handleAutoLaunchToggle}
               />
             </div>
-            <ThresholdSlider
-              value={wordThreshold}
-              onChange={handleThresholdChange}
-            />
+            <div className="setting-item">
+              <ThresholdSlider
+                value={wordThreshold}
+                onChange={handleThresholdChange}
+              />
+            </div>
             <div className="setting-item">
               <LanguageDropdown
                 selectedLanguage={selectedLanguage}

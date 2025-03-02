@@ -7,11 +7,19 @@
   margin-bottom: 1rem;
 }
 
+.quiz-mode-toggle .setting-label {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: var(--owl-dark);
+  font-size: 0.9rem;
+}
+
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 46px;  /* Reduced from 60px */
-  height: 24px; /* Reduced from 34px */
+  width: 46px;
+  height: 24px;
 }
 
 .toggle-switch input {
@@ -27,27 +35,31 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--parrot-accent);
   transition: .4s;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px;    /* Reduced from 26px */
-  width: 18px;     /* Reduced from 26px */
-  left: 3px;       /* Reduced from 4px */
-  bottom: 3px;     /* Reduced from 4px */
-  background-color: white;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--parrot-light);
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--parrot-primary);
+}
+
+.theme-owl input:checked + .slider {
+  background-color: var(--owl-primary);
 }
 
 input:checked + .slider:before {
-  transform: translateX(22px); /* Adjusted from 26px */
+  transform: translateX(22px);
 }
 
 .slider.round {
@@ -59,6 +71,14 @@ input:checked + .slider:before {
 }
 
 .toggle-label {
-  font-size: 0.8rem;  /* Reduced from 0.9rem */
-  color: #666;
+  font-size: 0.8rem;
+  color: var(--owl-dark);
+}
+
+.theme-parrot .toggle-label {
+  color: var(--parrot-secondary);
+}
+
+.theme-owl .toggle-label {
+  color: var(--owl-accent);
 }

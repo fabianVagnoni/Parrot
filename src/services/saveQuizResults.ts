@@ -1,12 +1,18 @@
 import { SMUQuizResult, SMUQuizStats } from '../utils/interfaces';
 
-export const saveQuizResult = (word: string, language: string, isCorrect: boolean): Promise<void> => {
+export const saveQuizResult = (
+  word: string, 
+  language: string, 
+  isCorrect: boolean, 
+  translatedWord?: string
+): Promise<void> => {
   return new Promise((resolve, reject) => {
     const result: SMUQuizResult = {
       word,
       language,
       correct: isCorrect,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      translatedWord
     };
 
     // Get existing stats from Chrome storage

@@ -3,6 +3,7 @@ export interface SMUQuizResult {
     language: string;
     correct: boolean;
     timestamp: string;
+    translatedWord?: string;
   }
   
 export interface SMUQuizStats {
