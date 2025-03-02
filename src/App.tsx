@@ -22,11 +22,11 @@ function App() {
   const [isResetting, setIsResetting] = useState(false);
   const [statsVersion, setStatsVersion] = useState(0); // Add a version counter for stats
   const [wordThreshold, setWordThreshold] = useState(30); // Default to 30 (300 words)
-  const [settingsExpanded, setSettingsExpanded] = useState(false); // Add state for settings visibility
+  const [settingsExpanded, setSettingsExpanded] = useState(false); // Always closed by default
 
   // Load saved preferences when component mounts
   useEffect(() => {
-    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode', 'wordThreshold', 'settingsExpanded'], (result) => {
+    chrome.storage.local.get(['selectedLanguage', 'autoLaunchEnabled', 'currentMode', 'wordThreshold'], (result) => {
       if (result.selectedLanguage) {
         setSelectedLanguage(result.selectedLanguage);
       }
@@ -39,9 +39,7 @@ function App() {
       if (result.wordThreshold !== undefined) {
         setWordThreshold(result.wordThreshold);
       }
-      if (result.settingsExpanded !== undefined) {
-        setSettingsExpanded(result.settingsExpanded);
-      }
+      // We don't load settingsExpanded from storage to ensure it's always closed on startup
     });
   }, []);
 
@@ -173,9 +171,8 @@ function App() {
 
   // Add a function to toggle settings visibility
   const toggleSettings = () => {
-    const newState = !settingsExpanded;
-    setSettingsExpanded(newState);
-    chrome.storage.local.set({ settingsExpanded: newState });
+    setSettingsExpanded(!settingsExpanded);
+    // We don't save to storage so it always starts closed
   };
 
   return (
@@ -216,12 +213,18 @@ function App() {
         </div>
         
         <div className="section">
-          <h2 className="section-title settings-toggle" onClick={toggleSettings}>
-            <span>⚙️ Settings</span>
-            <span className={`settings-toggle-icon ${settingsExpanded ? 'expanded' : ''}`}>
-              {settingsExpanded ? '▲' : '▼'}
-            </span>
-          </h2>
+          <h2 className="section-title">⚙️ Settings</h2>
+          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <button 
+              className="settings-toggle" 
+              onClick={toggleSettings}
+            >
+              <span>{settingsExpanded ? 'Hide Settings' : 'Show Settings'}</span>
+              <span className={`settings-toggle-icon ${settingsExpanded ? 'expanded' : ''}`}>
+                {settingsExpanded ? '▲' : '▼'}
+              </span>
+            </button>
+          </div>
           <div className="section-content" style={{ 
             maxHeight: settingsExpanded ? '1000px' : '0',
             opacity: settingsExpanded ? 1 : 0,
